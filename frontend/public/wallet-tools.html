@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wallet Tools – ONECOP</title>
+  <link rel="stylesheet" href="/css/wallet.css" />
+</head>
+<body>
+  <main>
+    <section id="walletBox" class="wallet-box">
+      <h2>🔐 Herramientas Wallet</h2>
+      <div id="walletStatus" class="wallet-status">Detectando wallet...</div>
+
+      <hr/>
+      <button id="btnBalance">🔍 Ver Balance</button>
+      <div id="balanceOutput">—</div>
+
+      <hr/>
+      <form id="formTransfer">
+        <label for="toAddress">Enviar a:</label>
+        <input type="text" id="toAddress" placeholder="0x..." required />
+        <label for="amount">Cantidad:</label>
+        <input type="number" id="amount" step="0.0001" min="0" placeholder="10.5" required />
+        <button type="submit">🚀 Transferir</button>
+        <div id="transferMsg"></div>
+      </form>
+
+      <hr/>
+      <button id="checkStake">✅ Verificar staking</button>
+      <div id="stakeMsg">—</div>
+    </section>
+  </main>
+
+  <!-- Configuración global -->
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <!-- Scripts funcionales -->
+  <script type="module" src="/js/wallet-status.js"></script>
+  <script type="module" src="/js/balance.js"></script>
+  <script type="module" src="/js/transfer.js"></script>
+  <script type="module" src="/js/stake-check.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Estadísticas – Panel Modelo</title>
+
+  <!-- Estilos base del proyecto -->
+  <link rel="stylesheet" href="../css/main.css" />
+  <!-- Estilos locales -->
+  <link rel="stylesheet" href="./model-stats.css" />
+</head>
+<body>
+  <main class="stats-wrap">
+    <div class="stats-head">
+      <h2>📊 Tus estadísticas</h2>
+      <span id="rangeLabel" class="muted">Últimos 7 días</span>
+    </div>
+
+    <!-- KPIs -->
+    <section class="cards" aria-label="Indicadores principales">
+      <article class="card" aria-label="Ingresos (USDT)">
+        <h3>Ingresos</h3>
+        <div class="kpi" id="kpiIncome">0 USDT</div>
+        <div class="muted">Confirmados en el período</div>
+      </article>
+
+      <article class="card" aria-label="Propinas (ONECOP)">
+        <h3>Propinas</h3>
+        <div class="kpi" id="kpiTips">0</div>
+        <div class="muted">Cantidad de tips recibidos</div>
+      </article>
+
+      <article class="card" aria-label="Sesiones en vivo">
+        <h3>Sesiones</h3>
+        <div class="kpi" id="kpiSessions">0</div>
+        <div class="muted">Total de transmisiones</div>
+      </article>
+    </section>
+
+    <!-- Ingresos por día -->
+    <section class="panel" aria-label="Ingresos diarios">
+      <h4>Ingresos diarios (USDT)</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Monto</th>
+              <th style="width:50%">Proporción</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyIncomeDays">
+            <tr><td colspan="3">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Top tippers -->
+    <section class="panel" aria-label="Top tippers">
+      <h4>Top tippers (ONECOP)</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Usuario</th>
+              <th>ONECOP</th>
+              <th style="width:40%">Proporción</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyTopTippers">
+            <tr><td colspan="4">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p id="msg" class="muted" aria-live="polite"></p>
+  </main>
+
+  <script src="./model-stats.js"></script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="dashboard.admin.title">Panel de Administrador — RedVelvetLive</title>
+  <meta name="description" content="Panel administrativo: usuarios registrados, ingresos, actividad y accesos rápidos.">
+  <link rel="canonical" href="https://www.redvelvetlive.com/admin-dashboard.html">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+  <!-- Header -->
+  <div data-include="header"></div>
+
+  <main class="main-container">
+    <!-- KPIs -->
+    <section class="panel fade-in">
+      <div class="panel-header">
+        <h1 data-i18n="dashboard.admin.heading">Panel de Administrador</h1>
+        <p class="muted" data-i18n="dashboard.admin.lead">Estadísticas globales y accesos rápidos.</p>
+      </div>
+
+      <div class="cards-grid" style="--grid-min: 220px;">
+        <article class="card kpi">
+          <div class="kicker" data-i18n="dashboard.kpi.totalUsers">Usuarios totales</div>
+          <div class="kpi-value" id="kpiUsers">—</div>
+        </article>
+
+        <article class="card kpi">
+          <div class="kicker" data-i18n="dashboard.kpi.models">Modelos registradas</div>
+          <div class="kpi-value" id="kpiModels">—</div>
+        </article>
+
+        <article class="card kpi">
+          <div class="kicker" data-i18n="dashboard.kpi.clients">Clientes registrados</div>
+          <div class="kpi-value" id="kpiClients">—</div>
+        </article>
+
+        <article class="card kpi">
+          <div class="kicker" data-i18n="dashboard.kpi.earnings">Ingresos (USDT)</div>
+          <div class="kpi-value" id="kpiEarnings">—</div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Usuarios recientes -->
+    <section class="panel fade-in">
+      <div class="panel-header">
+        <h2 data-i18n="dashboard.admin.recentUsers">Usuarios recientes</h2>
+      </div>
+
+      <div class="card table-like" role="region" aria-live="polite">
+        <div class="table-head">
+          <div data-i18n="table.date">Fecha</div>
+          <div data-i18n="table.user">Usuario</div>
+          <div data-i18n="table.role">Rol</div>
+        </div>
+        <div id="usersBody" class="table-body">
+          <div class="row skeleton-row"></div>
+          <div class="row skeleton-row"></div>
+          <div class="row skeleton-row"></div>
+        </div>
+        <div id="usersEmpty" class="muted" style="display:none" data-i18n="table.loading">Cargando…</div>
+      </div>
+    </section>
+
+    <!-- Acciones rápidas -->
+    <section class="panel fade-in">
+      <div class="panel-header">
+        <h2 data-i18n="dashboard.admin.quickActions">Accesos rápidos</h2>
+      </div>
+
+      <div class="cards-grid" style="--grid-min: 260px;">
+        <article class="card">
+          <div class="kicker" data-i18n="dashboard.admin.manageModels">Gestionar modelos</div>
+          <p class="muted" data-i18n="dashboard.admin.manageModelsDesc">Ver, editar o suspender perfiles de modelos.</p>
+          <a class="btn" href="/admin-models.html" data-i18n="actions.manage">Administrar</a>
+        </article>
+
+        <article class="card">
+          <div class="kicker" data-i18n="dashboard.admin.reports">Reportes</div>
+          <p class="muted" data-i18n="dashboard.admin.reportsDesc">Revisar reportes de abuso o incidentes.</p>
+          <a class="btn" href="/admin-reports.html" data-i18n="actions.view">Ver reportes</a>
+        </article>
+
+        <article class="card">
+          <div class="kicker" data-i18n="dashboard.admin.finances">Finanzas</div>
+          <p class="muted" data-i18n="dashboard.admin.financesDesc">Consultar ingresos y flujos de tokens.</p>
+          <a class="btn" href="/admin-finanzas.html" data-i18n="actions.access">Acceder</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer & cookies -->
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <!-- Base config -->
+  <script>
+    // ✅ Ahora soporta Vite (import.meta.env) además de fallback
+    window.API_BASE = window.API_BASE || import.meta?.env?.VITE_API_BASE || '/api';
+  </script>
+
+  <!-- Scripts globales -->
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/i18n.js" type="module"></script>
+
+  <!-- Lógica específica del dashboard admin -->
+  <script>
+    const $ = (s, r = document) => r.querySelector(s);
+
+    function setKpi(id, val) {
+      const el = $(id);
+      if (el) el.textContent = val ?? 0;
+    }
+
+    function fillUsers(users) {
+      const body = $('#usersBody');
+      const empty = $('#usersEmpty');
+      if (!body) return;
+      body.innerHTML = '';
+      if (!users || !users.length) {
+        empty.style.display = '';
+        return;
+      }
+      empty.style.display = 'none';
+      users.forEach(u => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = `
+          <div>${new Date(u.createdAt || Date.now()).toLocaleDateString()}</div>
+          <div>${u.username || u.email || '—'}</div>
+          <div>${u.role || '—'}</div>
+        `;
+        body.appendChild(row);
+      });
+    }
+
+    async function hydrateAdminDashboard() {
+      try {
+        const statsRes = await fetch(`${window.API_BASE}/admin/kpis`, { credentials: 'include' });
+        const stats = await statsRes.json();
+
+        setKpi('#kpiUsers', stats?.totalUsers);
+        setKpi('#kpiModels', stats?.totalModels);
+        setKpi('#kpiClients', stats?.totalClients);
+        setKpi('#kpiEarnings', stats?.earningsUSDT);
+
+        const usersRes = await fetch(`${window.API_BASE}/admin/users?limit=10`, { credentials: 'include' });
+        const users = await usersRes.json();
+        fillUsers(users);
+      } catch (err) {
+        console.warn('Admin dashboard fallback', err);
+        setKpi('#kpiUsers', 0);
+        setKpi('#kpiModels', 0);
+        setKpi('#kpiClients', 0);
+        setKpi('#kpiEarnings', 0);
+        fillUsers([]);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', hydrateAdminDashboard);
+  </script>
+</body>
+</html>
+

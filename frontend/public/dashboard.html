@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="redirect.title">Redirigiendo a tu panel…</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <main class="container" style="text-align:center; padding:80px 0;">
+    <h1 data-i18n="redirect.heading">Redirigiendo a tu panel…</h1>
+    <p class="muted" data-i18n="redirect.checking">Comprobando tu sesión y rol.</p>
+    <noscript>
+      <p class="muted" data-i18n="redirect.noscript">Necesitas habilitar JavaScript para acceder al panel.</p>
+    </noscript>
+  </main>
+
+  <!-- Base config -->
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <script>
+    (async function redirectUser() {
+      try {
+        const res = await fetch((window.API_BASE||'/api') + '/users/profile', {credentials:'include'});
+        if (res.ok) {
+          const user = await res.json();
+          if (user?.role === 'model') {
+            return location.replace('/model-dashboard.html');
+          }
+          if (user?.role === 'admin') {
+            return location.replace('/admin-dashboard.html');
+          }
+          return location.replace('/client-dashboard.html');
+        }
+        // fallback localStorage
+        const role = localStorage.getItem('role') || '';
+        if (role === 'model') location.replace('/model-dashboard.html');
+        else if (role === 'admin') location.replace('/admin-dashboard.html');
+        else location.replace('/client-dashboard.html');
+      } catch (err) {
+        console.error('Error al redirigir:', err);
+        location.replace('/login.html');
+      }
+    })();
+  </script>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+</body>
+</html>

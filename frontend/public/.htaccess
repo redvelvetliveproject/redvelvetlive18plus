@@ -1,0 +1,76 @@
+# =========================================
+# RedVelvetLive - .htaccess (Apache)
+# =========================================
+
+# Evitar listado de directorios
+Options -Indexes
+
+# Forzar HTTPS y www
+RewriteEngine On
+
+# Forzar HTTPS (si no hay proxy que ya lo haga)
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://www.redvelvetlive.com%{REQUEST_URI} [R=301,L]
+
+# Canonical a www
+RewriteCond %{HTTP_HOST} !^www\.redvelvetlive\.com$ [NC]
+RewriteRule ^ https://www.redvelvetlive.com%{REQUEST_URI} [R=301,L]
+
+# Bloquear archivos sensibles
+<FilesMatch "(\.env(\..*)?$|package(-lock)?\.json|webpack\.config\.js|tsconfig\.json|composer\.(json|lock)|\.git|\.gitignore|\.DS_Store|\.bak|\.swp)$">
+  Require all denied
+</FilesMatch>
+
+# Ocultar dotfiles
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# Compresión Brotli/Gzip
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+# Cache estática
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 5 minutes"
+  ExpiresByType text/css "access plus 30 days"
+  ExpiresByType application/javascript "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType image/avif "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresDefault "access plus 7 days"
+</IfModule>
+
+# ETags coherentes
+FileETag MTime Size
+
+# Seguridad (ajusta CSP/Policies según orígenes reales)
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data: https:; connect-src 'self' https: wss:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+
+  # No indexar secciones privadas
+  <FilesMatch "^(login|register|profile|wallet|settings|notifications|dashboard.*)\.html$">
+    Header always set X-Robots-Tag "noindex, nofollow"
+  </FilesMatch>
+
+  <FilesMatch "^(robots\.txt|sitemap\.xml)$">
+    Header unset X-Robots-Tag
+  </FilesMatch>
+</IfModule>
+
+# Limpieza de URLs .html: permite /foo -> /foo.html (sin romper /sitemap.xml)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.html -f
+RewriteRule ^(.+)$ $1.html [L]

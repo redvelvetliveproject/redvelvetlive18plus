@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="support.title">Soporte — RedVelvetLive</title>
+  <meta name="description" content="Centro de soporte de RedVelvetLive: FAQs, contacto, reportes de abuso/DMCA y envío de tickets." data-i18n="support.metaDescription">
+  <link rel="canonical" href="https://www.redvelvetlive.com/support.html">
+  <meta name="color-scheme" content="dark light">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    .status-banner{display:flex;align-items:center;gap:.6rem;border:1px solid var(--border);border-radius:12px;padding:.75rem;background:var(--panel-2)}
+    .status-dot{width:10px;height:10px;border-radius:50%}
+    .dot-ok{background:#16a34a}.dot-warn{background:#f59e0b}.dot-bad{background:#ef4444}
+    .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .inline-help{font-size:.9rem;color:var(--muted)}
+    .field{display:flex;flex-direction:column;gap:.4rem}
+    input, select, textarea{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--panel);color:var(--text)}
+  </style>
+</head>
+<body>
+  <div data-include="header"></div>
+
+  <main class="main-container">
+    <header class="panel" style="margin-bottom:14px">
+      <h1 data-i18n="support.title">Soporte</h1>
+      <div id="statusBanner" class="status-banner" role="status" aria-live="polite">
+        <span class="status-dot dot-ok" id="statusDot" aria-hidden="true"></span>
+        <div>
+          <strong id="statusText" data-i18n="support.systemOk">Todos los sistemas operativos</strong>
+          <div class="muted"><small data-i18n="support.systemNote">Si notas problemas, envía un ticket abajo.</small></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2 data-i18n="support.quickLinks">Enlaces rápidos</h2>
+      <div class="contact-grid">
+        <a class="list-card" href="/faq.html">
+          <div class="body">
+            <div class="kicker" data-i18n="support.help">Ayuda</div>
+            <div class="title" data-i18n="support.faq">Preguntas Frecuentes</div>
+            <div class="muted" data-i18n="support.faqNote">Soluciones rápidas</div>
+          </div>
+        </a>
+        <a class="list-card" href="/privacy.html">
+          <div class="body">
+            <div class="kicker" data-i18n="support.legal">Legal</div>
+            <div class="title" data-i18n="support.privacy">Privacidad</div>
+            <div class="muted" data-i18n="support.privacyNote">Tratamiento de datos</div>
+          </div>
+        </a>
+        <a class="list-card" href="/terms.html#dmca">
+          <div class="body">
+            <div class="kicker" data-i18n="support.legal">Legal</div>
+            <div class="title" data-i18n="support.dmca">DMCA</div>
+            <div class="muted" data-i18n="support.dmcaNote">Retiro de contenidos</div>
+          </div>
+        </a>
+        <a class="list-card" href="/contact.html">
+          <div class="body">
+            <div class="kicker" data-i18n="support.contact">Contacto</div>
+            <div class="title" data-i18n="support.emails">Correos directos</div>
+            <div class="muted" data-i18n="support.emailNote">Soporte · Abuso</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3 data-i18n="support.abuseTitle">Reporte rápido de abuso / no consensual</h3>
+      <p class="muted" data-i18n="support.abuseNote">Incluye la URL exacta, capturas (si es seguro) y descripción. Prioridad máxima.</p>
+      <div class="actions">
+        <a class="btn danger" href="mailto:abuse@redvelvetlive.com?subject=Reporte%20de%20abuso%20urgente" data-i18n="support.reportBtn">Reportar por correo</a>
+        <a class="btn secondary" href="/terms.html#contenido-prohibido" data-i18n="support.policyBtn">Política de contenido</a>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="ticketTitle">
+      <h2 id="ticketTitle" data-i18n="support.ticketTitle">Crear un ticket</h2>
+      <form id="ticketForm" class="grid" style="gap:12px" novalidate>
+        <div class="field">
+          <label for="name" data-i18n="support.nameLabel">Nombre</label>
+          <input id="name" name="name" placeholder="Tu nombre" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="email" data-i18n="support.emailLabel">Correo</label>
+          <input id="email" name="email" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="category" data-i18n="support.categoryLabel">Categoría</label>
+          <select id="category" name="category" required>
+            <option value="">Selecciona una opción…</option>
+            <option value="account" data-i18n="support.catAccount">Cuenta / Acceso</option>
+            <option value="payments" data-i18n="support.catPayments">Pagos / Wallet</option>
+            <option value="live" data-i18n="support.catLive">Live / Streaming</option>
+            <option value="security" data-i18n="support.catSecurity">Seguridad / Abuso</option>
+            <option value="other" data-i18n="support.catOther">Otro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="subject" data-i18n="support.subjectLabel">Asunto</label>
+          <input id="subject" name="subject" placeholder="Resumen del problema" required maxlength="120">
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label for="message" data-i18n="support.messageLabel">Descripción</label>
+          <textarea id="message" name="message" rows="6" placeholder="Cuéntanos qué ocurre..." required></textarea>
+          <div class="inline-help" data-i18n="support.responseTime">Tiempo de respuesta habitual: 24–48 h laborables.</div>
+        </div>
+
+        <div class="field">
+          <label style="display:flex;gap:8px;align-items:center">
+            <input id="consent" type="checkbox" required>
+            <span data-i18n="support.consent">Acepto el tratamiento de datos para gestionar mi solicitud.</span>
+          </label>
+        </div>
+
+        <div class="actions" style="grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn primary" type="submit" id="submitBtn" data-i18n="support.submitBtn">Enviar ticket</button>
+          <a class="btn secondary" href="mailto:soporte@redvelvetlive.com" data-i18n="support.altEmail">Enviar por correo</a>
+          <span id="formMsg" class="muted" role="status" aria-live="polite" style="display:none"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h3 data-i18n="support.tipsTitle">Consejos para acelerar la respuesta</h3>
+      <ul>
+        <li data-i18n="support.tip1">Incluye la URL exacta (ej.: <code>/live.html?id=123</code>).</li>
+        <li data-i18n="support.tip2">Especifica tu dispositivo/navegador y versión.</li>
+        <li data-i18n="support.tip3">Indica si el problema ocurre en modo incógnito o tras borrar caché.</li>
+      </ul>
+    </section>
+  </main>
+
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/analytics.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script src="/js/support.js" defer></script>
+</body>
+</html>

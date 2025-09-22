@@ -1,0 +1,324 @@
+/* --------------------------------------------------------------------------
+   RedVelvetLive — main.css (versión final integrada)
+   Estilos globales + componentes específicos (wallet, withdraw, tips history)
+   -------------------------------------------------------------------------- */
+
+/* === Reset / Normalización === */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body, h1, h2, h3, h4, p, figure, blockquote, dl, dd { margin: 0; }
+ul[role="list"], ol[role="list"] { list-style: none; margin: 0; padding: 0; }
+img, picture { max-width: 100%; display: block; }
+button, input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid #e31221; outline-offset: 2px; }
+::selection { background: #e3122124; }
+
+/* === Tokens de diseño === */
+:root {
+  --font-sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial;
+
+  /* Colores base (modo claro) */
+  --bg: #ffffff;
+  --bg-soft: #f6f7f8;
+  --panel: #ffffff;
+  --border: #e9eaec;
+  --text: #16181d;
+  --muted: #61646b;
+
+  /* Marca */
+  --brand: #e31221;
+  --brand-600: #c80f1d;
+  --brand-700: #a80d18;
+
+  /* Estados */
+  --ok: #16a34a;
+  --warn: #f59e0b;
+  --err: #ef4444;
+
+  /* Radios y sombras */
+  --radius: 14px;
+  --shadow-1: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-2: 0 8px 24px rgba(0,0,0,.08);
+
+  /* Tipografías */
+  --size-xs: .78rem;
+  --size-sm: .9rem;
+  --size-md: 1rem;
+  --size-lg: 1.125rem;
+  --size-xl: 1.375rem;
+  --size-2xl: clamp(1.625rem, 1.2rem + 1.6vw, 2.25rem);
+  --size-3xl: clamp(2.2rem, 1.4rem + 3vw, 3.2rem);
+
+  /* Contenedor y gaps */
+  --container: min(1140px, 92vw);
+  --gap: 16px;
+  --header-height: 64px;
+}
+
+/* === Modo oscuro automático === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e0f12;
+    --bg-soft: #14161a;
+    --panel: #121418;
+    --border: #20232a;
+    --text: #f4f5f7;
+    --muted: #a2a6ae;
+    --shadow-1: 0 1px 2px rgba(0,0,0,.5);
+    --shadow-2: 0 12px 28px rgba(0,0,0,.45);
+  }
+}
+
+/* Tema manual: data-theme="light" o "dark" */
+html[data-theme="light"] {
+  --bg: #ffffff; --bg-soft: #f6f7f8; --panel: #ffffff; --border: #e9eaec;
+  --text: #16181d; --muted: #61646b;
+}
+html[data-theme="dark"] {
+  --bg: #0e0f12; --bg-soft: #14161a; --panel: #121418; --border: #20232a;
+  --text: #f4f5f7; --muted: #a2a6ae;
+}
+
+/* Scrollbar personalizado */
+body::-webkit-scrollbar { width: 10px; }
+body::-webkit-scrollbar-track { background: var(--bg-soft); }
+body::-webkit-scrollbar-thumb { background-color: var(--brand); border-radius: 10px; border: 2px solid var(--bg-soft); }
+
+/* Modo alto contraste */
+html.contrast-mode {
+  --bg: #000;
+  --text: #fff;
+  --muted: #ccc;
+  --border: #fff3;
+  --brand: #ffcc00;
+}
+
+/* Modo disléxico */
+html.dyslexia-mode { font-family: 'OpenDyslexic', var(--font-sans); }
+
+/* Animaciones utilitarias */
+.slide-in-left { animation: slideLeft .6s ease forwards; }
+@keyframes slideLeft { from {opacity:0;transform:translateX(-40px);} to{opacity:1;transform:translateX(0);} }
+.zoom-in { animation: zoomIn .4s ease forwards; }
+@keyframes zoomIn { from{opacity:0;transform:scale(.8);} to{opacity:1;transform:scale(1);} }
+.fade-in-up { animation: fadeUp .5s ease forwards; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+/* === Base === */
+html, body { width:100%; height:100%; }
+body {
+  font-family: var(--font-sans);
+  font-size: var(--size-md);
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  scroll-behavior: smooth;
+}
+
+/* === Contenedor === */
+.main-container { width: var(--container); margin: 0 auto; padding: 24px 16px 56px; }
+
+/* === Grids === */
+.grid { display:grid; gap:var(--gap); }
+.grid-2 { grid-template-columns: repeat(2,1fr); }
+.grid-3 { grid-template-columns: repeat(3,1fr); }
+.grid-4 { grid-template-columns: repeat(4,1fr); }
+@media (max-width:1024px){.grid-3,.grid-4{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:640px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}}
+
+/* === Header & nav === */
+.site-header {
+  position: sticky; top:0; width:100%; height:var(--header-height);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px; background:var(--panel); border-bottom:1px solid var(--border);
+  z-index:40; box-shadow:var(--shadow-1);
+}
+.logo { font-weight:800; font-size:var(--size-lg); }
+.logo .accent { color:var(--brand); }
+.nav { display:flex; gap:14px; }
+.nav a { padding:8px 12px; border-radius:8px; color:var(--muted); }
+.nav a:hover,.nav a.active-link { background:var(--bg-soft); color:var(--text); }
+
+/* Menú móvil */
+@media (max-width:900px){
+  .nav{position:fixed;top:var(--header-height);left:0;right:0;flex-direction:column;transform:translateY(-100%);transition:.3s;}
+  .nav.nav-open{transform:translateY(0);}
+  .nav a{width:100%;padding:12px 16px;border-radius:0;}
+  .menu-toggle{display:block;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--panel);}
+}
+
+/* === Botones === */
+.btn {
+  display:inline-flex;align-items:center;gap:8px;padding:10px 16px;
+  border-radius:var(--radius);border:1px solid var(--border);
+  background:var(--panel);cursor:pointer;font-weight:600;
+}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;}
+.btn.primary:hover{background:var(--brand-600);}
+.btn.secondary{background:var(--bg-soft);}
+.btn.link{border:none;background:none;color:var(--brand);}
+.btn[disabled]{opacity:.6;pointer-events:none;}
+
+/* === Toast global === */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: -320px;
+  min-width: 220px;
+  max-width: 320px;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: all .4s ease;
+  z-index: 9999;
+}
+.toast.show { right: 20px; opacity: 1; }
+.toast-success { background: #16a34a; }
+.toast-error   { background: #dc2626; }
+.toast-info    { background: #2563eb; }
+.toast-warn    { background: #f59e0b; color:#111; }
+
+/* === Botón accesibilidad === */
+.btn-accessibility {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 50%;
+  padding: 12px;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+/* === Sección Batallas === */
+.battle-card {
+  border: 2px dashed var(--brand);
+  padding: 16px;
+  border-radius: var(--radius);
+  text-align: center;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(227,18,33,.6); }
+  50% { box-shadow: 0 0 12px 8px rgba(227,18,33,.2); }
+}
+
+/* === Modo Principiante Tímido === */
+.shy-mode {
+  background: #111;
+  color: #aaa;
+  border: 1px solid #333;
+  padding: 16px;
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+/* === Estilos específicos: Wallet === */
+.wallet-container {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  max-width: 500px;
+  margin: 2rem auto;
+  box-shadow: var(--shadow-2);
+}
+.wallet-container h2 { margin-bottom: 16px; font-size: var(--size-xl); }
+.balance-card {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-1);
+}
+.balance-card h3 { margin: 0; font-size: var(--size-lg); }
+.balance-card p { margin-top: .5rem; font-size: var(--size-xl); font-weight: bold; color: var(--brand); }
+.wallet-actions { display:flex; gap:12px; margin-bottom:16px; }
+.wallet-actions button {
+  flex:1; display:flex; align-items:center; justify-content:center;
+  gap:8px; padding:12px; border:none; border-radius:var(--radius);
+  cursor:pointer; background:var(--brand); color:#fff; font-weight:600;
+  transition:background .2s;
+}
+.wallet-actions button:hover { background: var(--brand-600); }
+.info { font-size: var(--size-sm); color: var(--muted); }
+.info code {
+  font-family: ui-monospace, monospace;
+  background: var(--bg-soft);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+/* === Estilos específicos: Withdraw === */
+.withdraw-container {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  max-width: 480px;
+  margin: 2rem auto;
+  box-shadow: var(--shadow-2);
+}
+.withdraw-container h2 { margin-bottom:16px; font-size:var(--size-xl); }
+.withdraw-container .balance {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-1);
+}
+.withdraw-container form label { margin-top: 12px; font-weight: 600; }
+.withdraw-container input[type="text"],
+.withdraw-container input[type="number"] {
+  width: 100%; margin-top:4px; padding:10px 12px;
+  border:1px solid var(--border); border-radius: var(--radius);
+  background: var(--panel); color: var(--text);
+}
+.withdraw-container button {
+  margin-top:16px; padding:12px; width:100%;
+  border:none; border-radius: var(--radius);
+  background: var(--brand); color:#fff; font-weight:600; cursor:pointer;
+  transition: background .2s ease;
+}
+.withdraw-container button:hover { background: var(--brand-600); }
+.nota { margin-top:12px; font-size: var(--size-sm); color: var(--muted); }
+
+/* === Estilos específicos: Tips History === */
+.tips-history-container {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  max-width: 700px;
+  margin: 2rem auto;
+  box-shadow: var(--shadow-2);
+}
+.tips-history-container h2 { margin-bottom:16px; font-size: var(--size-xl); }
+.tips-table {
+  width: 100%; border-collapse: collapse;
+  margin-bottom: 16px; font-size: var(--size-sm);
+}
+.tips-table thead th {
+  text-align: left; padding: 8px;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+}
+.tips-table tbody td {
+  padding: 8px; border-bottom: 1px solid var(--border);
+}
+.tips-table tbody tr:nth-child(even) { background: var(--bg-soft); }
+#exportarTipsPDF {
+  display:inline-block; padding:10px 16px;
+  border:none; border-radius: var(--radius);
+  background: var(--brand); color:#fff; cursor:pointer; font-weight:600;
+  transition: background .2s;
+}
+#exportarTipsPDF:hover { background: var(--brand-600); }

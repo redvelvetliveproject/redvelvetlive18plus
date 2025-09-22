@@ -1,0 +1,55 @@
+*** a/backend/src/models/Wallet.js
+--- b/backend/src/models/Wallet.js
+@@
+-import mongoose from 'mongoose';
+-
+-const { Schema, model, Types } = mongoose;
+-
+-const walletSchema = new Schema(
+-  {
+-    user:   { type: Types.ObjectId, ref: 'User', required: true, index: true },
+-    address: {
+-      type: String,
+-      required: true,
+-      lowercase: true,
+-      trim: true,
+-      match: [/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'],
+-    },
+-    primary:  { type: Boolean, default: false, index: true },
+-    verified: { type: Boolean, default: false, index: true },
+-    chainId:  { type: Number, default: 56 },
+-    meta:     { type: Schema.Types.Mixed },
+-  },
+-  { timestamps: true }
+-);
+-
+-// Unicidad por usuario + address
+-walletSchema.index({ user: 1, address: 1 }, { unique: true });
+-
+-export default model('Wallet', walletSchema);
++import mongoose from 'mongoose';
++
++const { Schema, model, Types } = mongoose;
++
++const WalletSchema = new Schema(
++  {
++    userId:  { type: Types.ObjectId, ref: 'User', required: true, index: true },
++    address: {
++      type: String,
++      required: true,
++      lowercase: true,
++      trim: true,
++      match: [/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'],
++    },
++    isPrimary:  { type: Boolean, default: false, index: true },
++    isVerified: { type: Boolean, default: false, index: true },
++    chainId:    { type: Number, default: 56 },
++    meta:       { type: Schema.Types.Mixed },
++  },
++  { timestamps: true }
++);
++
++// Unicidad por usuario + address
++WalletSchema.index({ userId: 1, address: 1 }, { unique: true });
++
++export default model('Wallet', WalletSchema);

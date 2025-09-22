@@ -1,0 +1,44 @@
+/* wallet-tools.css */
+#walletBox {
+  background: #111;
+  border: 1px solid #333;
+  padding: 1rem;
+  border-radius: 10px;
+  max-width: 400px;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 1rem auto;
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+
+#walletBox .label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+#walletBox .value {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #FFD700;
+}
+
+#walletBox .usdt {
+  font-size: 1rem;
+  color: #0f0;
+}
+
+#walletBox button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #FFD700;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#walletBox button:hover {
+  background: #ffcc00;
+}

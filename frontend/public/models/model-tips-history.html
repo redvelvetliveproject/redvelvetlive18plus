@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Historial de Tips – Modelo</title>
+  <link rel="stylesheet" href="model-tips-history.css">
+</head>
+<body>
+  <section class="tips-history-container" aria-label="Historial de propinas recibidas">
+    <h2>💸 Historial de Tips Recibidos</h2>
+
+    <table id="tablaTips" class="tips-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Usuario</th>
+          <th>Tip (ONECOP)</th>
+          <th>Equivalente (USDT)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>10/07/2025</td>
+          <td>@CryptoFan99</td>
+          <td>1500</td>
+          <td>$15.00</td>
+        </tr>
+        <tr>
+          <td>09/07/2025</td>
+          <td>@LatamLover</td>
+          <td>800</td>
+          <td>$8.00</td>
+        </tr>
+        <tr>
+          <td>08/07/2025</td>
+          <td>@AnonSupporter</td>
+          <td>1200</td>
+          <td>$12.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button id="exportarTipsPDF">📄 Exportar Tips a PDF</button>
+  </section>
+
+  <!-- Librerías necesarias -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="./model-tips-history.js"></script>
+</body>
+</html>
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- autoTable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="../js/model-tips-history.js"></script>

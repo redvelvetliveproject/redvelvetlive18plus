@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="register.title">Regístrate – RedVelvetLive</title>
+  <meta name="description" content="Crea tu cuenta como modelo o espectador y comienza a disfrutar o monetizar en RedVelvetLive.">
+  <link rel="canonical" href="https://www.redvelvetlive.com/register.html">
+  <meta name="color-scheme" content="dark light">
+
+  <!-- Fuentes y estilos -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+  <!-- Header -->
+  <div data-include="header"></div>
+
+  <main class="main-container">
+    <section class="panel fade-in" aria-labelledby="registerTitle" style="max-width:720px;margin-inline:auto;">
+      <div class="panel-header">
+        <h1 id="registerTitle" data-i18n="register.heading">Regístrate en RedVelvetLive</h1>
+        <p class="muted" data-i18n="register.lead">
+          Empieza a ganar dinero mostrando tu talento ante miles de personas y viewers múltiples transmisiones en vivo.
+        </p>
+      </div>
+
+      <div class="card">
+        <form id="registerForm" class="grid" style="gap:14px;" novalidate>
+          <!-- Usuario -->
+          <div>
+            <label class="sr-only" for="username">Nombre de usuario</label>
+            <input id="username" name="username" type="text" placeholder="Nombre de usuario" required />
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label class="sr-only" for="email">Correo electrónico</label>
+            <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Correo electrónico" required />
+          </div>
+
+          <!-- Contraseña -->
+          <div style="position:relative">
+            <label class="sr-only" for="password">Contraseña</label>
+            <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Contraseña" required minlength="6" />
+            <button type="button" id="togglePwd" class="btn link" style="position:absolute; right:6px; top:6px;">👁️</button>
+            <div id="passwordStrength" class="muted" style="font-size:0.85em; margin-top:6px;">&nbsp;</div>
+          </div>
+
+          <!-- Confirmar contraseña -->
+          <div>
+            <label class="sr-only" for="confirmPassword">Repetir contraseña</label>
+            <input id="confirmPassword" name="confirmPassword" type="password" placeholder="Repetir contraseña" required minlength="6" />
+          </div>
+
+          <!-- Rol -->
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <label><input type="radio" name="role" value="model" required /> Soy modelo</label>
+            <label><input type="radio" name="role" value="client" /> Soy espectador</label>
+          </div>
+
+          <!-- Botones externos -->
+          <div style="display:flex;flex-wrap:wrap;gap:12px;">
+            <button type="button" class="btn" style="flex:1;" onclick="alert('OAuth pendiente de activar')">
+              <img src="/assets/icons/google.svg" alt="" width="18" /> Registrarse con Google
+            </button>
+            <button type="button" class="btn" style="flex:1;" onclick="connectMetaMask()">
+              <img src="/assets/icons/metamask.svg" alt="" width="18" /> Registrarse con MetaMask
+            </button>
+          </div>
+
+          <!-- Términos -->
+          <div style="margin-top:8px;">
+            <label style="display:flex;gap:8px;align-items:center;">
+              <input type="checkbox" required />
+              <span>Acepto los <a href="/terminos.html" target="_blank">Términos y Condiciones</a></span>
+            </label>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn primary" id="submitBtn">Crear cuenta</button>
+
+          <!-- Mensajes -->
+          <div id="formMsg" class="muted" role="status" aria-live="polite" style="display:none;"></div>
+
+          <!-- Iniciar sesión -->
+          <p class="muted">¿Ya tienes una cuenta? <a href="/login.html">Iniciar sesión</a></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <!-- Config global -->
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <!-- Scripts -->
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/theme-switcher.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+
+  <!-- Lógica -->
+  <script>
+    const $ = (s, r = document) => r.querySelector(s);
+    const password = $('#password');
+    const confirmPassword = $('#confirmPassword');
+    const strength = $('#passwordStrength');
+    const togglePwd = $('#togglePwd');
+    const form = $('#registerForm');
+    const msg = $('#formMsg');
+
+    togglePwd?.addEventListener('click', () => {
+      const isPwd = password.type === 'password';
+      password.type = isPwd ? 'text' : 'password';
+      togglePwd.textContent = isPwd ? '🙈' : '👁️';
+    });
+
+    function evaluatePassword(pwd) {
+      let score = 0;
+      if (pwd.length >= 6) score++;
+      if (/[A-Z]/.test(pwd)) score++;
+      if (/[0-9]/.test(pwd)) score++;
+      if (/[^A-Za-z0-9]/.test(pwd)) score++;
+      return score;
+    }
+
+    password.addEventListener('input', () => {
+      const val = password.value;
+      const score = evaluatePassword(val);
+      if (!val) return strength.textContent = '';
+      strength.textContent = ['Muy débil','Débil','Aceptable','Fuerte'][score-1] || '';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.style.display = 'none';
+      const username = $('#username').value.trim();
+      const email = $('#email').value.trim();
+      const pwd = password.value;
+      const confirm = confirmPassword.value;
+      const role = form.role.value;
+
+      if (!username || !email || !pwd || !confirm || !role) {
+        msg.textContent = 'Completa todos los campos.'; msg.style.display = 'block'; return;
+      }
+      if (pwd !== confirm) {
+        msg.textContent = 'Las contraseñas no coinciden.'; msg.style.display = 'block'; return;
+      }
+
+      msg.textContent = 'Registrando…'; msg.style.display = 'block';
+      setTimeout(() => {
+        msg.textContent = '✅ Registro exitoso. Redirigiendo…';
+        setTimeout(() => window.location.href = '/login.html', 2000);
+      }, 1500);
+    });
+
+    async function connectMetaMask() {
+      if (!window.ethereum) return alert('MetaMask no está instalado');
+      try {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        alert(`Wallet conectada: ${accounts[0]}`);
+      } catch {
+        alert('Conexión cancelada.');
+      }
+    }
+  </script>
+</body>
+</html>

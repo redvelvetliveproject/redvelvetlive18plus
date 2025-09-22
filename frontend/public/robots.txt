@@ -1,0 +1,15 @@
+# robots.txt para RedVelvetLive
+User-agent: *
+Allow: /
+
+# Bloquear rutas internas y sensibles
+Disallow: /api/
+Disallow: /auth/
+Disallow: /settings.html
+Disallow: /profile.html
+Disallow: /wallet.html
+Disallow: /dashboard.html
+
+# Sitemap
+Sitemap: https://www.redvelvetlive.com/sitemap.xml
+Sitemap: https://www.redvelvetlive.com/sitemap-posts.xml

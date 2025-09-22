@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transmisión en Vivo – RedVelvetLive</title>
+  
+  <!-- Estilos base -->
+  <link rel="stylesheet" href="../css/main.css" />
+  <!-- Estilos específicos -->
+  <link rel="stylesheet" href="./model-live-stream.css" />
+</head>
+<body>
+  <header>🔴 En Vivo – RedVelvetLive</header>
+  
+  <section class="stream-container">
+    <video id="localVideo" autoplay muted playsinline controls></video>
+    <div class="controls">
+      <button onclick="startStream()">🎥 Iniciar Transmisión</button>
+      <button onclick="stopStream()">🛑 Detener</button>
+    </div>
+  </section>
+
+  <script>
+    let localStream;
+
+    async function startStream() {
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const videoElement = document.getElementById("localVideo");
+        videoElement.srcObject = localStream;
+      } catch (error) {
+        console.error("Error al iniciar la transmisión:", error);
+        alert("No se pudo acceder a tu cámara o micrófono. Revisa permisos.");
+        document.getElementById("localVideo").insertAdjacentHTML(
+          "afterend",
+          "<p class='muted'>⚠️ Cámara/micrófono no disponibles.</p>"
+        );
+      }
+    }
+
+    function stopStream() {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        document.getElementById("localVideo").srcObject = null;
+      }
+    }
+  </script>
+</body>
+</html>

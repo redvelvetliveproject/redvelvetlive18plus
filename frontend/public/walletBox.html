@@ -1,0 +1,15 @@
+<div id="walletBox" class="wallet-box">
+  <div id="walletStatus">🔄 Verificando wallet...</div>
+  <div id="walletBalance">Balance: —</div>
+  <div id="walletChain">Red: —</div>
+  <div class="actions" style="margin-top:10px;">
+    <button id="btnConnect">🔗 Conectar Wallet</button>
+    <button id="btnDisconnect" style="display:none;">❌ Desconectar</button>
+  </div>
+</div>
+
+<script>
+  window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+  window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+</script>
+<script type="module" src="/js/wallet-box.js"></script>

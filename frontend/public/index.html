@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RedVelvetLive – Gana dinero mostrando tu talento en streaming</title>
+  <meta name="description" content="RedVelvetLive: transmítele al mundo tu talento y gana dinero. Descubre modelos en vivo, guía de seguridad y artículos para crecer.">
+  <link rel="canonical" href="https://www.redvelvetlive.com/" />
+  <meta name="color-scheme" content="dark light" />
+
+  <!-- Open Graph básicos -->
+  <meta property="og:title" content="RedVelvetLive – Gana dinero mostrando tu talento en streaming">
+  <meta property="og:description" content="Descubre streams en vivo, ranking, guía para modelos y artículos útiles.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.redvelvetlive.com/">
+  <meta property="og:image" content="/assets/hero/cover.webp">
+
+  <!-- Fuente -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Estilos globales -->
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Variables de tema mínimas -->
+  <style>
+    :root{
+      --bg:#0b0b0c;--surface:#151519;--text:#f7f8fa;--muted:#a0a3ab;
+      --card:#1b1b20;--border:#26262c;--brand:#e31221;--brand-600:#c10f1c;
+    }
+    html[data-theme="light"]{
+      --bg:#ffffff;--surface:#f8f8fa;--text:#0b0b0c;--muted:#61646b;
+      --card:#ffffff;--border:#e9e9ef;
+    }
+    body{background:var(--bg); color:var(--text);}    
+    .panel{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px;}
+    .panel + .panel{margin-top:28px}
+    .muted{color:var(--muted)}
+    .btn{display:inline-flex; align-items:center; gap:8px; border-radius:10px; padding:10px 16px; border:1px solid var(--border); text-decoration:none}
+    .btn.primary{background:var(--brand); color:#fff; border-color:var(--brand-600)}
+    .btn.primary:hover{filter:saturate(1.05) brightness(.98)}
+    .grid{display:grid; gap:14px}
+    .grid-3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+    .grid-4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+    .hero{display:grid; grid-template-columns:1.05fr .95fr; align-items:center; gap:24px; padding:20px 0}
+    @media (max-width: 900px){.hero{grid-template-columns:1fr}}
+    .hero .display{font-size:clamp(28px,5vw,54px); font-weight:800; margin:0 0 10px}
+    .hero .lead{font-size:clamp(16px,2vw,18px); margin:0 0 18px; color:var(--muted)}
+  </style>
+
+  <!-- Aplica tema guardado -->
+  <script>
+    (function(){
+      const KEY='rv-theme';
+      try{
+        const saved=localStorage.getItem(KEY);
+        const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme=saved||(prefersDark?'dark':'light');
+        document.documentElement.setAttribute('data-theme',theme);
+      }catch(e){}
+    })();
+  </script>
+</head>
+
+<body>
+  <noscript><div class="panel" style="margin:16px 0">Necesitas JavaScript para usar RedVelvetLive.</div></noscript>
+
+  <!-- Header -->
+  <div data-include="header"></div>
+
+  <main class="main-container">
+    <!-- Hero -->
+    <section class="hero fade-in">
+      <div class="hero-content">
+        <h1 class="display">Gana dinero mostrando tu talento en streaming</h1>
+        <p class="lead">Únete a RedVelvetLive y comparte tu talento con miles de personas.</p>
+        <div class="actions" style="display:flex; gap:10px; flex-wrap:wrap">
+          <a class="btn primary" href="/register.html">Crear cuenta</a>
+          <a class="btn" href="/login.html">Iniciar sesión</a>
+        </div>
+      </div>
+      <div class="hero-media" role="img" aria-label="Modelo sonriendo">
+        <img src="/assets/hero/cover.webp" alt="" loading="eager" decoding="async" />
+      </div>
+    </section>
+
+    <!-- Top Models -->
+    <section class="panel">
+      <div class="panel-header"><h2>Top Models</h2><p class="muted">Ranking semanal</p></div>
+      <div class="grid grid-4">
+        <div class="card"><img class="avatar" src="/assets/avatars/avatar-1.jpg" alt="Laura"><div>Laura</div></div>
+        <div class="card"><img class="avatar" src="/assets/avatars/avatar-2.jpg" alt="Carmen"><div>Carmen</div></div>
+        <div class="card"><img class="avatar" src="/assets/avatars/avatar-3.jpg" alt="Valeria"><div>Valeria</div></div>
+        <a class="card" href="/ranking.html">Ver más ›</a>
+      </div>
+    </section>
+
+    <!-- Blog -->
+    <section class="panel">
+      <div class="panel-header"><h2>Últimos artículos</h2></div>
+      <div class="grid grid-3">
+        <a class="list-card" href="/blog.html#hola-mundo"><img src="/assets/posts/post-1.jpg"><div class="body"><div class="kicker">Blog</div><div class="title">Hola Mundo</div></div></a>
+        <a class="list-card" href="/blog.html#seguridad"><img src="/assets/posts/post-2.jpg"><div class="body"><div class="kicker">Guía</div><div class="title">Guía de seguridad</div></div></a>
+        <a class="list-card" href="/blog.html#como-empezar"><img src="/assets/posts/post-3.jpg"><div class="body"><div class="kicker">Guía</div><div class="title">Cómo empezar</div></div></a>
+      </div>
+    </section>
+
+    <!-- Guía -->
+    <section class="panel panel-accent">
+      <div class="panel-header"><h2>Guía para modelos</h2></div>
+      <div class="feature">
+        <div class="feature-text">
+          <p>Conoce claves y consejos de seguridad.</p>
+          <a class="btn" href="/bienvenida.html">Abrir guía</a>
+        </div>
+        <img src="/assets/guide/cover.webp" alt="">
+      </div>
+    </section>
+  </main>
+
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <!-- Botón de tema -->
+  <button id="themeToggle" class="theme-toggle">🌙</button>
+
+  <!-- Config base -->
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/cookies.js" defer></script>
+  <script src="/js/analytics.js" defer></script>
+  <script src="/js/home.js" defer></script>
+</body>
+</html>
+
