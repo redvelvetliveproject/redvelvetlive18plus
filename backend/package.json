@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "clean-install": "rm -rf node_modules package-lock.json && npm install && npm install @metamask/eth-sig-util bcrypt cors dotenv ethers express express-mongo-sanitize express-rate-limit helmet hpp jsonwebtoken mongoose morgan xss-clean"
   },
   "dependencies": {
     "@metamask/eth-sig-util": "^7.0.1",
@@ -28,6 +29,7 @@
     "nodemon": "^3.1.0"
   }
 }
+
 
 
 
