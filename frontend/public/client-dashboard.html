@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="dashboard.client.title">Panel del Cliente — RedVelvetLive</title>
+  <meta name="description" content="Panel del cliente en RedVelvetLive: tips enviados, modelos seguidos, saldo y actividad reciente.">
+  <link rel="canonical" href="https://www.redvelvetlive.com/client-dashboard.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <div data-include="header"></div>
+  <main class="main-container">
+    <section class="panel fade-in" aria-labelledby="dashTitle">
+      <div class="panel-header">
+        <h1 id="dashTitle">
+          <span data-i18n="dashboard.client.heading">Bienvenido, </span><span id="clientName">—</span>
+        </h1>
+        <p class="muted">
+          <span data-i18n="dashboard.role">Tu rol:</span>
+          <strong data-i18n="dashboard.client.role">Cliente</strong>
+        </p>
+      </div>
+      <div class="cards-grid" style="--grid-min: 220px;">
+        <article class="card kpi">
+          <div class="kicker" data-i18n="dashboard.kpi.tipsSent30d">Tips enviados (30d)</div>
+          <div class="kpi-value" id="kpiTips">—</div>
+        </article>
+        <article class="card kpi">
+          <div class="kicker" data-i18n="dashboard.kpi.following">Modelos seguidos</div>
+          <div class="kpi-value" id="kpiFollowing">—</div>
+        </article>
+        <article class="card kpi">
+          <div class="kicker" data-i18n="dashboard.kpi.balanceOnecop">Saldo (ONECOP)</div>
+          <div class="kpi-value" id="kpiBalance">—</div>
+        </article>
+      </div>
+    </section>
+    <section class="panel fade-in" aria-labelledby="recentTitle">
+      <div class="panel-header">
+        <h2 id="recentTitle" data-i18n="dashboard.activityTitle">Actividad reciente</h2>
+      </div>
+      <div class="card table-like" role="region" aria-live="polite">
+        <div class="table-head">
+          <div data-i18n="table.date">Fecha</div>
+          <div data-i18n="table.action">Acción</div>
+          <div data-i18n="table.detail">Detalle</div>
+        </div>
+        <div id="activityBody" class="table-body">
+          <div class="row skeleton-row"></div>
+          <div class="row skeleton-row"></div>
+          <div class="row skeleton-row"></div>
+        </div>
+        <div id="activityEmpty" class="muted" style="display:none" data-i18n="table.loading">Cargando…</div>
+      </div>
+    </section>
+    <section class="panel fade-in" aria-labelledby="quickTitle">
+      <div class="panel-header">
+        <h2 id="quickTitle" data-i18n="dashboard.quickActions">Acciones rápidas</h2>
+      </div>
+      <div class="cards-grid" style="--grid-min: 260px;">
+        <article class="card">
+          <div class="kicker" data-i18n="dashboard.notifications">Notificaciones</div>
+          <p class="muted" data-i18n="dashboard.notificationsDesc">Gestiona tus notificaciones de nuevos streams y mensajes.</p>
+          <a class="btn" href="/notifications.html" data-i18n="actions.configure">Configurar</a>
+        </article>
+        <article class="card">
+          <div class="kicker" data-i18n="dashboard.wallet">Wallet</div>
+          <p class="muted" data-i18n="dashboard.walletDesc">Conecta o revisa tu billetera ONECOP.</p>
+          <a class="btn" href="/wallet.html" data-i18n="actions.configure">Configurar</a>
+        </article>
+        <article class="card">
+          <div class="kicker" data-i18n="dashboard.support">Soporte</div>
+          <p class="muted" data-i18n="dashboard.supportDesc">¿Necesitas ayuda? Estamos para asistirte.</p>
+          <a class="btn" href="/support.html" data-i18n="actions.configure">Abrir ticket</a>
+        </article>
+      </div>
+    </section>
+  </main>
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <!-- Base config con import.meta.env -->
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/theme-switcher.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+
+  <script>
+    (function () {
+      const $ = (s, r=document)=>r.querySelector(s);
+      const API = (path, opts={}) =>
+        fetch((window.API_BASE||'/api') + path, Object.assign({ credentials:'include' }, opts))
+          .then(async res => {
+            if (!res.ok) throw new Error(await res.text()||('HTTP '+res.status));
+            try { return await res.json(); } catch { return null; }
+          });
+      function setKpi(id, val){ const el=$(id); if(el) el.textContent=(val ?? 0); }
+      function fillActivity(rows){
+        const body = $('#activityBody'); const empty = $('#activityEmpty');
+        if(!body) return;
+        body.innerHTML = '';
+        if(!rows || !rows.length){ empty.style.display=''; return; }
+        empty.style.display='none';
+        rows.forEach(r=>{
+          const row = document.createElement('div');
+          row.className='row';
+          row.innerHTML = `
+            <div>${new Date(r.date||Date.now()).toLocaleString()}</div>
+            <div>${r.action||'-'}</div>
+            <div class="muted">${r.detail||''}</div>
+          `;
+          body.appendChild(row);
+        });
+      }
+      async function hydrate(){
+        try{
+          const prof = await API('/users/profile');
+          $('#clientName').textContent = (prof && (prof.displayName||prof.username||prof.email)) || '—';
+          const kpis = await API('/client/kpis').catch(()=>null);
+          setKpi('#kpiTips',      kpis?.tipsSent30d);
+          setKpi('#kpiFollowing', kpis?.following);
+          setKpi('#kpiBalance',   kpis?.balanceOnecop);
+          const rec = await API('/client/activity?limit=10').catch(()=>null);
+          fillActivity(rec && rec.items ? rec.items : rec);
+        }catch(e){
+          setKpi('#kpiTips',      0);
+          setKpi('#kpiFollowing', 0);
+          setKpi('#kpiBalance',   0);
+          fillActivity([]);
+          console.warn('Dashboard fallback:', e?.message||e);
+        }
+      }
+      document.addEventListener('DOMContentLoaded', hydrate);
+    })();
+  </script>
+</body>
+</html>
+
+

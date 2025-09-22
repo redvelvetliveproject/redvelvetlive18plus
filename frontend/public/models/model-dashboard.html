@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel de la Modelo – RedVelvetLive</title>
+
+  <!-- Estilos globales + específicos -->
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="./model-dashboard.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <aside class="sidebar" aria-label="Menú del panel">
+      <div class="sidebar-header">
+        <h2>RedVelvetLive</h2>
+        <button id="toggleSidebar" class="menu-toggle" aria-label="Contraer menú">☰</button>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="model-dashboard-home.html" target="main">🏠 Inicio</a></li>
+          <li><a href="model-live-stream.html" target="main">🔴 Ir a transmitir</a></li>
+          <li><a href="model-stats.html" target="main">📊 Mis Estadísticas</a></li>
+          <li><a href="model-withdraw.html" target="main">💸 Retiro</a></li>
+          <li><a href="model-ranking.html" target="main">🏆 Ranking</a></li>
+          <li><a href="model-referrals.html" target="main">📣 Referidos</a></li>
+          <li><a href="model-settings.html" target="main">⚙️ Configuración</a></li>
+          <li><a href="../index.html" id="logoutLink">🚪 Cerrar sesión</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <iframe name="main" src="model-dashboard-home.html" title="Contenido del panel" frameborder="0"></iframe>
+    </main>
+  </div>
+
+  <!-- JS global -->
+  <script src="../js/navigation.js"></script>
+  <script>
+    // Guardia de sesión (modelo)
+    (function guard() {
+      try {
+        const token = localStorage.getItem('rvl_token');
+        const user  = JSON.parse(localStorage.getItem('rvl_user') || '{}');
+        if (!token || !user || (user.role && user.role.toLowerCase() !== 'model')) {
+          location.href = '/login.html';
+        }
+      } catch (_) {
+        location.href = '/login.html';
+      }
+    })();
+
+    const sidebar = document.querySelector('.sidebar');
+    const toggle  = document.getElementById('toggleSidebar');
+
+    // Restaurar estado de sidebar (colapsada o no)
+    const saved = localStorage.getItem('rvl_model_sidebar_collapsed');
+    if (saved === '1') sidebar.classList.add('collapsed');
+
+    toggle?.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      const isCollapsed = sidebar.classList.contains('collapsed');
+      localStorage.setItem('rvl_model_sidebar_collapsed', isCollapsed ? '1' : '0');
+    });
+
+    // Logout
+    document.getElementById('logoutLink')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('rvl_token');
+      localStorage.removeItem('rvl_user');
+      location.href = e.currentTarget.getAttribute('href') || '/index.html';
+    });
+  </script>
+</body>
+</html>

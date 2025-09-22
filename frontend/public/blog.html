@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="blog_title">Blog – Consejos y Noticias | RedVelvetLive</title>
+  <meta name="description" content="Consejos de seguridad, guías de crecimiento y noticias de RedVelvetLive para modelos y usuarios." data-i18n="blog_description">
+  <link rel="canonical" href="https://www.redvelvetlive.com/blog.html" />
+  <meta name="color-scheme" content="dark light" />
+  <meta property="og:title" content="Blog – RedVelvetLive">
+  <meta property="og:description" content="Consejos de seguridad, guías de crecimiento y noticias de la comunidad.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.redvelvetlive.com/blog.html">
+  <meta property="og:image" content="/assets/posts/post-1.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+  <div data-include="header"></div>
+
+  <main class="main-container">
+    <section class="panel">
+      <div class="panel-header">
+        <h1 data-i18n="blog_encabezado">Blog / Notas</h1>
+      </div>
+      <p class="muted" data-i18n="blog_intro">Consejos, seguridad y crecimiento en la plataforma.</p>
+    </section>
+
+    <!-- Controles y render dinámico -->
+    <section class="panel">
+      <div class="controls-grid">
+        <input id="blogSearch" type="search" placeholder="Buscar…" />
+        <select id="blogCategory">
+          <option value="">Todas</option>
+          <option value="Web3">Web3</option>
+          <option value="Seguridad">Seguridad</option>
+          <option value="Crecimiento">Crecimiento</option>
+          <option value="Plataforma">Plataforma</option>
+        </select>
+        <select id="blogSort">
+          <option value="recent">Más recientes</option>
+          <option value="popular">Más populares</option>
+        </select>
+      </div>
+
+      <div id="blogGrid" class="grid grid-3"></div>
+
+      <div class="pagination">
+        <button id="blogPrev">←</button>
+        <span id="blogPage">1</span>
+        <button id="blogNext">→</button>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <!-- Scripts -->
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/theme-switcher.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script type="module" src="/js/blog.js"></script>
+</body>
+</html>

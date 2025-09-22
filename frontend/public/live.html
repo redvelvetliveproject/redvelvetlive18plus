@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Live — RedVelvetLive</title>
+  <meta name="description" content="Descubre salas en vivo ahora: busca por idioma, país o popularidad.">
+  <link rel="canonical" href="https://www.redvelvetlive.com/live.html">
+  <meta name="color-scheme" content="dark light">
+  <meta property="og:title" content="Live — RedVelvetLive">
+  <meta property="og:description" content="Explora transmisiones en vivo por idioma, país y popularidad.">
+  <meta property="og:image" content="/assets/hero/cover.webp">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <div data-include="header"></div>
+  <main class="main-container">
+    <section class="panel fade-in">
+      <div class="panel-header"><h1>En vivo ahora</h1><span class="badge">Actualiza para ver más salas</span></div>
+      <div class="grid" style="grid-template-columns:1.4fr 1fr 1fr 1fr; gap:10px;">
+        <input id="q" type="search" placeholder="Buscar…">
+        <select id="lang"><option value="">Idioma</option><option value="es">Español</option></select>
+        <select id="country"><option value="">País</option><option value="CO">Colombia</option></select>
+        <select id="sort"><option value="pop">Popularidad</option><option value="new">Recientes</option></select>
+      </div>
+    </section>
+    <section class="panel fade-in" aria-live="polite">
+      <div id="liveGrid" class="grid grid-3"></div>
+      <div id="emptyState" class="muted" style="display:none;text-align:center;">No encontramos salas.</div>
+    </section>
+  </main>
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/analytics.js" defer></script>
+  <script src="/js/live.js" defer></script>
+</body>
+</html>

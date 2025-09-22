@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="profile.title">👩‍🎤 Perfil de Modelo – RedVelvetLive</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <section class="profile-container" aria-label="Perfil de la modelo">
+    <h2 data-i18n="profile.header">👩‍🎤 Mi Perfil</h2>
+
+    <div class="card">
+      <p><strong data-i18n="profile.username">Nombre artístico:</strong> <span id="profileUsername">ValeryQueen</span></p>
+      <p><strong data-i18n="profile.email">Correo electrónico:</strong> <span id="profileEmail">valery@example.com</span></p>
+      <p><strong data-i18n="profile.status">Estado:</strong> <span id="profileStatus">Activo</span></p>
+    </div>
+
+    <button class="btn primary" id="editProfileBtn" data-i18n="profile.editBtn">✏️ Editar Perfil</button>
+  </section>
+
+  <script>
+    document.getElementById("editProfileBtn").addEventListener("click", () => {
+      alert("Edición de perfil próximamente.");
+    });
+  </script>
+</body>
+</html>

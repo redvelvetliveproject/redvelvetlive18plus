@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="settings.title">⚙️ Ajustes de Cuenta – Modelo</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <section class="settings-container" aria-label="Ajustes de la modelo">
+    <h2 data-i18n="settings.header">⚙️ Ajustes de Cuenta</h2>
+
+    <form id="settingsForm">
+      <label for="username" data-i18n="settings.username">Nombre artístico:</label>
+      <input type="text" id="username" name="username" value="ValeryQueen" required>
+
+      <label for="email" data-i18n="settings.email">Correo electrónico:</label>
+      <input type="email" id="email" name="email" value="valery@example.com" required>
+
+      <label for="notificaciones" data-i18n="settings.notifications">Notificaciones por correo:</label>
+      <select id="notificaciones" name="notificaciones">
+        <option value="todas" data-i18n="settings.all">Recibir todas</option>
+        <option value="solo-importantes" data-i18n="settings.important">Solo importantes</option>
+        <option value="ninguna" data-i18n="settings.none">Ninguna</option>
+      </select>
+
+      <label for="idioma" data-i18n="settings.language">Idioma preferido:</label>
+      <select id="idioma" name="idioma">
+        <option value="es" selected data-i18n="lang.es">Español</option>
+        <option value="en" data-i18n="lang.en">English</option>
+      </select>
+
+      <button type="submit" class="btn primary" data-i18n="settings.save">💾 Guardar cambios</button>
+    </form>
+
+    <p id="saveMsg" class="muted"></p>
+  </section>
+
+  <script>
+    document.getElementById("settingsForm").addEventListener("submit", e => {
+      e.preventDefault();
+      document.getElementById("saveMsg").textContent = "✅ Cambios guardados (demo local).";
+    });
+  </script>
+</body>
+</html>

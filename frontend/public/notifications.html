@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="notifications.title">Notificaciones — RedVelvetLive</title>
+  <meta name="description" content="Bonos, recompensas y actividad reciente de tu cuenta en RedVelvetLive.">
+  <link rel="canonical" href="https://www.redvelvetlive.com/notifications.html">
+  <meta name="color-scheme" content="dark light">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <!-- Header (partial) -->
+  <div data-include="header"></div>
+
+  <main class="main-container">
+    <section class="panel fade-in" aria-labelledby="notifTitle">
+      <div class="panel-header">
+        <h1 id="notifTitle" data-i18n="notifications.title">Bonos y recompensas</h1>
+        <p class="muted" data-i18n="notifications.subtitle">Aquí verás tus avisos importantes, logros y actividad reciente.</p>
+      </div>
+
+      <!-- Controles -->
+      <div class="grid" style="grid-template-columns:1fr 140px; gap:10px; margin-bottom:6px;">
+        <input id="q" type="search" data-i18n-placeholder="notifications.search" placeholder="Buscar notificaciones… (p. ej. bono, seguidor)">
+        <select id="filter">
+          <option value="" data-i18n="notifications.filters.all">Todas</option>
+          <option value="bonus" data-i18n="notifications.filters.bonus">Bonos</option>
+          <option value="follower" data-i18n="notifications.filters.follower">Seguidores</option>
+          <option value="tip" data-i18n="notifications.filters.tip">Tips</option>
+          <option value="system" data-i18n="notifications.filters.system">Sistema</option>
+        </select>
+      </div>
+
+      <!-- Lista -->
+      <section class="card" role="region" aria-live="polite" aria-busy="true">
+        <ul id="list" class="notif-list" role="list" style="margin:0; padding:0;">
+          <li class="skeleton" style="height:58px; margin-bottom:8px;"></li>
+          <li class="skeleton" style="height:58px; margin-bottom:8px;"></li>
+          <li class="skeleton" style="height:58px; margin-bottom:8px;"></li>
+        </ul>
+
+        <div id="empty" class="muted" style="display:none; text-align:center; padding:10px;" data-i18n="notifications.empty">
+          No hay notificaciones para mostrar.
+        </div>
+
+        <div class="actions" style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px;">
+          <button id="markAll" class="btn" data-i18n="notifications.markAll">Marcar todo como leído</button>
+          <button id="clearAll" class="btn danger" data-i18n="notifications.clearAll">Borrar todo</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- Cookies + Footer -->
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <!-- Config front -->
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <!-- Scripts base -->
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script src="/js/analytics.js" defer></script>
+
+  <!-- Lógica de página -->
+  <script>
+    (function(){
+      const $ = (s,r=document)=>r.querySelector(s);
+      const listEl  = $('#list');
+      const emptyEl = $('#empty');
+      const qEl     = $('#q');
+      const fEl     = $('#filter');
+      const markBtn = $('#markAll');
+      const clearBtn= $('#clearAll');
+
+      const STATIC = [
+        { id:'n1', type:'bonus',    title:'Perfil destacado', detail:'+25% si alcanzas Platino este fin de semana.', date: Date.now()-3_600_000, read:false },
+        { id:'n2', type:'follower', title:'Nuevo seguidor',  detail:'@diego ahora te sigue.',                        date: Date.now()-7_200_000, read:false },
+        { id:'n3', type:'system',   title:'Meta alcanzada',  detail:'Tu transmisión superó 1.2k viewers.',          date: Date.now()-86_400_000, read:true  },
+        { id:'n4', type:'tip',      title:'Nuevo tip',       detail:'+5 ONECOP de @Leo',                             date: Date.now()-5_000_000, read:false }
+      ];
+
+      async function fetchNotifications(){
+        try {
+          const res = await fetch((window.API_BASE||'/api') + '/notifications', { credentials:'include' });
+          if (!res.ok) throw new Error('HTTP '+res.status);
+          const data = await res.json();
+          return (Array.isArray(data)?data:(data?.items||[])).map(n=>({
+            id: n.id || n._id || crypto.randomUUID(),
+            type: n.type || 'system',
+            title: n.title || 'Notificación',
+            detail: n.detail || n.message || '',
+            date: new Date(n.date || n.createdAt || Date.now()).getTime(),
+            read: !!n.read
+          }));
+        } catch {
+          return STATIC;
+        }
+      }
+
+      function fmtDate(ts){ try { return new Date(ts).toLocaleString(); } catch { return '—'; } }
+
+      function render(items){
+        listEl.setAttribute('aria-busy','false');
+        listEl.innerHTML = '';
+        if (!items.length) { emptyEl.style.display = ''; return; }
+        emptyEl.style.display = 'none';
+
+        items.forEach(n=>{
+          const li = document.createElement('li');
+          li.className = 'notif-row';
+          li.style.listStyle='none';
+          li.style.borderBottom = '1px solid var(--border)';
+          li.style.padding = '10px 6px';
+          li.innerHTML = `
+            <div style="display:flex; align-items:flex-start; gap:10px;">
+              <span class="badge" data-type="${n.type}">${labelFor(n.type)}</span>
+              <div style="flex:1">
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                  <strong>${escapeHtml(n.title)}</strong>
+                  <small class="muted">${fmtDate(n.date)}</small>
+                </div>
+                <div class="muted">${escapeHtml(n.detail)}</div>
+              </div>
+            </div>`;
+          if (!n.read) li.style.background = 'var(--panel-2)';
+          listEl.appendChild(li);
+        });
+      }
+
+      function escapeHtml(s){
+        return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      }
+
+      function labelFor(t){
+        switch((t||'').toLowerCase()){
+          case 'bonus': return i18n('notifications.labels.bonus', 'Bono');
+          case 'follower': return i18n('notifications.labels.follower', 'Seguidor');
+          case 'tip': return i18n('notifications.labels.tip', 'Tip');
+          default: return i18n('notifications.labels.system', 'Sistema');
+        }
+      }
+
+      function applyFilters(items){
+        const text = (qEl.value||'').trim().toLowerCase();
+        const ft   = (fEl.value||'').toLowerCase();
+        return items.filter(n=>{
+          const okText = !text || (n.title.toLowerCase().includes(text) || n.detail.toLowerCase().includes(text));
+          const okType = !ft || (n.type.toLowerCase()===ft);
+          return okText && okType;
+        }).sort((a,b)=> (b.date||0) - (a.date||0));
+      }
+
+      let SOURCE = [];
+      async function boot(){
+        listEl.setAttribute('aria-busy','true');
+        SOURCE = await fetchNotifications();
+        render(applyFilters(SOURCE));
+      }
+
+      qEl?.addEventListener('input', ()=> render(applyFilters(SOURCE)));
+      fEl?.addEventListener('change', ()=> render(applyFilters(SOURCE)));
+
+      markBtn?.addEventListener('click', async ()=>{
+        SOURCE = SOURCE.map(n=>({...n, read:true}));
+        render(applyFilters(SOURCE));
+        try { await fetch((window.API_BASE||'/api') + '/notifications/mark-all', {method:'POST', credentials:'include'}); } catch {}
+      });
+
+      clearBtn?.addEventListener('click', async ()=>{
+        if (!confirm(i18n('notifications.confirmClear', '¿Seguro que quieres borrar todas las notificaciones?'))) return;
+        SOURCE = [];
+        render(SOURCE);
+        try { await fetch((window.API_BASE||'/api') + '/notifications/clear', {method:'DELETE', credentials:'include'}); } catch {}
+      });
+
+      document.addEventListener('DOMContentLoaded', boot);
+    })();
+  </script>
+
+  <style>
+    .notif-list .badge{border:1px solid var(--border); border-radius:999px; padding:2px 8px; font-size:.8rem;}
+    .badge[data-type="bonus"]{border-color:#9b59b6;}
+    .badge[data-type="follower"]{border-color:#2980b9;}
+    .badge[data-type="tip"]{border-color:#16a085;}
+    .badge[data-type="system"]{border-color:#7f8c8d;}
+    .skeleton{position:relative;overflow:hidden;background:var(--panel-2);border-radius:12px;}
+    .skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:sh 1.1s infinite;}
+    @keyframes sh{to{transform:translateX(100%)}}
+  </style>
+</body>
+</html>
+

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="settings.title">Ajustes — RedVelvetLive</title>
+  <meta name="description" content="Configura tu cuenta: perfil, seguridad, notificaciones y privacidad." data-i18n="settings.description">
+  <link rel="canonical" href="https://www.redvelvetlive.com/settings.html">
+  <meta name="color-scheme" content="dark light">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <div data-include="header"></div>
+
+  <main class="main-container grid grid-2" style="--grid-min:320px">
+    <section class="card" aria-labelledby="stTitle">
+      <h2 id="stTitle" data-i18n="settings.heading">Ajustes</h2>
+
+      <h3 data-i18n="settings.basic_profile">Perfil básico</h3>
+      <form id="formProfile" class="grid" style="gap:10px;" novalidate>
+        <label data-i18n="form.display_name">Nombre
+          <input id="displayName" name="displayName" placeholder="Tu nombre visible" minlength="2" maxlength="60">
+        </label>
+        <label data-i18n="form.username">Usuario
+          <input id="username" name="username" placeholder="@usuario" minlength="2" maxlength="30">
+        </label>
+        <label data-i18n="form.email">Email
+          <input id="email" name="email" type="email" placeholder="tucorreo@ejemplo.com">
+        </label>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <a class="btn secondary" href="#" id="changeAvatarBtn" data-i18n="form.change_photo">Cambiar foto</a>
+          <a class="btn" href="/wallet.html" data-i18n="form.manage_wallet">Gestionar wallet</a>
+        </div>
+      </form>
+
+      <hr style="border-color:var(--border); margin:18px 0;">
+
+      <h3 data-i18n="settings.security">Seguridad</h3>
+      <div class="grid" style="gap:10px;">
+        <label style="display:flex; gap:8px; align-items:center">
+          <input id="twoFA" type="checkbox"> <span data-i18n="form.enable_2fa">Activar 2FA</span>
+        </label>
+        <a class="btn secondary" href="#" id="changePwdBtn" data-i18n="form.change_password">Cambiar contraseña</a>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="prefsTitle">
+      <h3 id="prefsTitle" data-i18n="settings.preferences">Preferencias</h3>
+
+      <div class="grid" style="gap:10px;">
+        <label data-i18n="form.language">Idioma
+          <select id="locale">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+      </div>
+
+      <h4 style="margin-top:14px" data-i18n="form.notifications">Notificaciones</h4>
+      <label style="display:flex; gap:8px; align-items:center">
+        <input id="notifEmail" type="checkbox"> <span data-i18n="form.notif_email">Email</span>
+      </label>
+      <label style="display:flex; gap:8px; align-items:center">
+        <input id="notifPush" type="checkbox"> <span data-i18n="form.notif_push">Push del navegador</span>
+      </label>
+
+      <hr style="border-color:var(--border); margin:18px 0;">
+      <h3 data-i18n="settings.privacy">Privacidad</h3>
+      <label style="display:flex; gap:8px; align-items:center">
+        <input id="showPublicProfile" type="checkbox"> <span data-i18n="privacy.show_profile">Mostrar perfil públicamente</span>
+      </label>
+      <label style="display:flex; gap:8px; align-items:center">
+        <input id="hideWallet" type="checkbox"> <span data-i18n="privacy.hide_wallet">Ocultar mi billetera a otros usuarios</span>
+      </label>
+      <label style="display:flex; gap:8px; align-items:center">
+        <input id="hideHistory" type="checkbox"> <span data-i18n="privacy.hide_history">Ocultar historial de transmisiones vistas</span>
+      </label>
+      <label style="display:flex; gap:8px; align-items:center">
+        <input id="hideFollowing" type="checkbox"> <span data-i18n="privacy.hide_following">Ocultar modelos seguidas</span>
+      </label>
+
+      <hr style="border-color:var(--border); margin:18px 0;">
+      <div class="grid" style="grid-template-columns:1fr 1fr; gap:10px;">
+        <button id="savePrefs" class="btn primary" data-i18n="form.save_changes">Guardar cambios</button>
+        <button id="logoutBtn" class="btn secondary" data-i18n="form.logout">Cerrar sesión</button>
+      </div>
+
+      <div id="dangerZone" class="panel" style="margin-top:14px">
+        <h4 data-i18n="form.danger_zone">Zona peligrosa</h4>
+        <p class="muted" data-i18n="form.danger_desc">Esta acción es irreversible.</p>
+        <button id="deleteBtn" class="btn danger" data-i18n="form.delete_account">Eliminar cuenta</button>
+      </div>
+
+      <div id="msg" role="status" aria-live="polite" class="muted" style="margin-top:10px; display:none"></div>
+    </section>
+  </main>
+
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <!-- Config -->
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/analytics.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+  <script src="/js/settings.js" defer></script>
+
+  <style>
+    input, select{width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--panel); color:var(--text)}
+    h4{margin:.2rem 0 .4rem}
+    .panel{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+  </style>
+</body>
+</html>

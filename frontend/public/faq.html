@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="faq.title">Preguntas Frecuentes – RedVelvetLive</title>
+  <meta name="description" content="Resuelve dudas sobre cuentas, pagos Web3, seguridad y funcionamiento de RedVelvetLive." data-i18n="faq.description">
+  <link rel="canonical" href="https://www.redvelvetlive.com/faq.html">
+  <meta property="og:title" content="Preguntas Frecuentes – RedVelvetLive">
+  <meta property="og:description" content="Cuentas, pagos en USDT/ONECOP, seguridad y legal.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.redvelvetlive.com/faq.html">
+  <meta property="og:image" content="https://www.redvelvetlive.com/assets/og-cover.jpg">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"¿Cómo creo mi cuenta?","acceptedAnswer":{"@type":"Answer","text":"Ve a Registro, completa nombre, email y contraseña. Elige tu rol (modelo o cliente). Debes confirmar mayoría de edad."}},
+      {"@type":"Question","name":"¿Cómo funcionan los pagos en USDT/ONECOP?","acceptedAnswer":{"@type":"Answer","text":"Tus ganancias se acreditan al finalizar cada live y puedes retirarlas si superan 5 USDT hacia tu wallet EVM. Luego conviertes vía P2P."}},
+      {"@type":"Question","name":"¿Quién puede usar la plataforma?","acceptedAnswer":{"@type":"Answer","text":"Solo mayores de 18 años (o mayoría de edad local). Cualquier indicio de menores implica suspensión y aviso a autoridades."}}
+    ]
+  }
+  </script>
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <div data-include="header"></div>
+  <main class="main-container">
+    <h1 data-i18n="faq.heading">Preguntas frecuentes</h1>
+    <p class="muted" data-i18n="faq.lead">
+      Aquí respondemos las dudas más comunes sobre cuentas, pagos Web3 (USDT/ONECOP), seguridad y uso de la plataforma.
+    </p>
+    <div class="faq-search" role="search" aria-label="Buscar en preguntas">
+      <input id="faqSearch" type="search" placeholder="Buscar en las preguntas…" aria-label="Buscar">
+      <button id="clearSearch" class="btn" aria-label="Limpiar búsqueda">✕</button>
+    </div>
+    <nav class="toc" aria-label="Índice rápido">
+      <a href="#cuenta">Cuenta y acceso</a>
+      <a href="#pagos">Pagos y Web3</a>
+      <a href="#seguridad">Seguridad y legal</a>
+      <a href="#privacidad">Privacidad y cookies</a>
+      <a href="#tecnica">Técnica</a>
+    </nav>
+    <!-- Las secciones FAQ siguen como en tu HTML original -->
+  </main>
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/cookies.js" defer></script>
+  <script type="module" src="/js/faq.js"></script>
+  <script type="module">
+    import { initI18n } from '/js/i18n.js';
+    initI18n();
+  </script>
+  <script src="/js/analytics.js" defer></script>
+</body>
+</html>
+

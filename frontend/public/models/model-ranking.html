@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ranking de Modelos – RedVelvetLive</title>
+  <link rel="stylesheet" href="model-ranking.css">
+</head>
+<body>
+  <section class="ranking-container" aria-label="Ranking de modelos">
+    <h2>🏆 Top Modelos de la Semana</h2>
+
+    <label for="filtro">Filtrar por:</label>
+    <select id="filtro" disabled>
+      <option>Esta semana</option>
+      <option>Mes actual</option>
+      <option>Trimestre</option>
+    </select>
+
+    <table id="tablaRanking" class="ranking-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre Artístico</th>
+          <th>Ganancias (USDT)</th>
+          <th>Tips (ONECOP)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background-color:#FFD70033; font-weight:bold;">
+          <td>🥇</td>
+          <td>ValeryQueen</td>
+          <td>$820</td>
+          <td>9,300</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>LunaBliss</td>
+          <td>$540</td>
+          <td>6,850</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>ShySweetie</td>
+          <td>$430</td>
+          <td>5,200</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button onclick="exportarPDF()">📄 Exportar a PDF</button>
+  </section>
+
+  <!-- Librerías jsPDF + autotable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <script>
+    async function exportarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(16);
+      doc.text("Top Modelos – RedVelvetLive", 20, 20);
+
+      const rows = Array.from(document.querySelectorAll("#tablaRanking tbody tr")).map(row =>
+        Array.from(row.children).map(cell => cell.innerText)
+      );
+
+      const headers = [["#", "Nombre", "USDT", "ONECOP"]];
+
+      doc.autoTable({
+        head: headers,
+        body: rows,
+        startY: 30,
+      });
+
+      doc.save("ranking-modelos.pdf");
+    }
+  </script>
+</body>
+</html>

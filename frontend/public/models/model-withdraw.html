@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retiro de Tokens – Modelo</title>
+  <link rel="stylesheet" href="model-withdraw.css">
+</head>
+<body>
+  <section class="withdraw-container" aria-label="Formulario de retiro de tokens">
+    <h2>💵 Retirar Ganancias</h2>
+
+    <div class="balance">
+      <p><strong>Saldo disponible:</strong></p>
+      <p id="balance-modelo">Cargando...</p>
+    </div>
+
+    <form id="formRetiro">
+      <label for="walletDestino">Wallet de destino (BEP20):</label>
+      <input type="text" id="walletDestino" placeholder="0x..." 
+             required pattern="^0x[a-fA-F0-9]{40}$">
+
+      <label for="cantidadRetiro">Cantidad a retirar (ONECOP):</label>
+      <input type="number" id="cantidadRetiro" placeholder="Ej: 100" 
+             required min="1" step="0.01">
+
+      <button type="submit">🚀 Retirar</button>
+    </form>
+
+    <p class="nota">⚠️ Simulación de retiro en testnet. Asegúrate de usar una wallet válida.</p>
+    <p id="msg" aria-live="polite"></p>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="./model-withdraw.js"></script>
+  <script>
+    // Hook al form para evitar inline JS
+    document.getElementById('formRetiro')?.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      retirarTokens(); // definido en model-withdraw.js
+    });
+  </script>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script src="model-withdraw.js"></script>

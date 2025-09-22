@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Referidos – RedVelvetLive</title>
+  <link rel="stylesheet" href="model-referrals.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+  <section class="referrals-container">
+    <h2>📣 Mi Enlace de Referido</h2>
+
+    <div class="referral-box">
+      <input type="text" id="referralLink" value="https://redvelvetlive.com/signup?ref=valeryqueen" readonly />
+      <button onclick="copiarEnlace()">📋 Copiar</button>
+    </div>
+
+    <canvas id="qrcode" class="qrcode" aria-label="Código QR de tu enlace de referido"></canvas>
+
+    <div class="stats">
+      <p><strong>Modelos referidas:</strong> <span id="referidas">8</span></p>
+      <p><strong>Recompensa acumulada:</strong> <span id="recompensa">320 USDT</span></p>
+    </div>
+
+    <div class="progress">
+      <label for="progreso">Progreso hacia los 1000 USDT:</label>
+      <progress id="progreso" value="320" max="1000"></progress>
+      <p id="mensajeMotivacional">¡Vas por el 32%! Sigue así, estás más cerca de tu bono especial 🔥</p>
+    </div>
+  </section>
+
+  <script>
+    function copiarEnlace() {
+      const link = document.getElementById("referralLink");
+      navigator.clipboard.writeText(link.value).then(() => {
+        alert("Enlace copiado al portapapeles ✅");
+      });
+    }
+
+    function generarQR() {
+      const link = document.getElementById("referralLink").value;
+      const canvas = document.getElementById("qrcode");
+      QRCode.toCanvas(canvas, link, { width: 128 }, function (error) {
+        if (error) console.error(error);
+      });
+    }
+
+    function actualizarMensaje() {
+      const progreso = parseInt(document.getElementById("progreso").value);
+      const mensaje = document.getElementById("mensajeMotivacional");
+
+      if (progreso >= 1000) {
+        mensaje.textContent = "🎉 ¡Felicidades! Has alcanzado el bono máximo de 1000 USDT.";
+      } else if (progreso >= 700) {
+        mensaje.textContent = "🔥 Estás muy cerca del objetivo. ¡Un último esfuerzo!";
+      } else if (progreso >= 400) {
+        mensaje.textContent = "🚀 Ya superaste la mitad, no te detengas.";
+      } else {
+        mensaje.textContent = `💪 Vas por el ${Math.round((progreso/1000)*100)}%. Sigue así, estás más cerca de tu bono especial.`;
+      }
+    }
+
+    generarQR();
+    actualizarMensaje();
+  </script>
+</body>
+</html>

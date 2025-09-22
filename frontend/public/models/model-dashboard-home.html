@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inicio – Panel Modelo</title>
+
+  <!-- Estilos globales -->
+  <link rel="stylesheet" href="../css/main.css" />
+  <!-- Estilos locales (asegúrate de crearlo o eliminar esta línea) -->
+  <link rel="stylesheet" href="./model-dashboard-home.css" />
+</head>
+<body>
+  <main class="home-wrap" aria-live="polite">
+    <div class="hello">
+      <h2>¡Hola, <span id="modelName">modelo</span>! 👋</h2>
+    </div>
+    <p class="sub">Este es tu resumen rápido. Desde aquí puedes ir a transmitir, ver estadísticas y gestionar tus retiros.</p>
+
+    <!-- KPIs rápidos -->
+    <section class="cards" aria-label="Resumen">
+      <article class="card" aria-label="Ingresos de hoy">
+        <h3>Ingresos de hoy</h3>
+        <div class="kpi" id="kpiToday">0 USDT</div>
+        <div class="muted">Actualiza al finalizar cada live</div>
+      </article>
+
+      <article class="card" aria-label="Propinas (ONECOP)">
+        <h3>Propinas (ONECOP)</h3>
+        <div class="kpi" id="kpiOnecop">0</div>
+        <div class="muted">Saldo estimado</div>
+      </article>
+
+      <article class="card" aria-label="Retiros pendientes">
+        <h3>Retiros pendientes</h3>
+        <div class="kpi" id="kpiWithdraw">0 USDT</div>
+        <div class="muted">Mínimo de retiro: 5 USDT</div>
+      </article>
+    </section>
+
+    <!-- Acciones rápidas -->
+    <section class="quick" aria-label="Accesos rápidos">
+      <button class="primary" id="goLive">🔴 Ir a transmitir</button>
+      <a href="./model-stats.html">📊 Ver estadísticas</a>
+      <a href="./model-withdraw.html">💸 Solicitar retiro</a>
+      <a href="./model-referrals.html">📣 Mis referidos</a>
+    </section>
+  </main>
+
+  <script>
+    // Rellenar nombre desde login (fallback username || name)
+    try {
+      const user = JSON.parse(localStorage.getItem('rvl_user') || '{}');
+      if (user?.username || user?.name) {
+        document.getElementById('modelName').textContent = user.username || user.name;
+      }
+    } catch {}
+
+    // Botón "Ir a transmitir"
+    document.getElementById('goLive')?.addEventListener('click', () => {
+      if (parent && parent.frames && parent.frames['main']) {
+        parent.frames['main'].location.href = './model-live-stream.html';
+      } else {
+        location.href = './model-live-stream.html';
+      }
+    });
+
+    // KPIs iniciales (puedes reemplazar con datos reales desde API)
+    document.getElementById('kpiToday').textContent    = '0 USDT';
+    document.getElementById('kpiOnecop').textContent   = '0';
+    document.getElementById('kpiWithdraw').textContent = '0 USDT';
+  </script>
+</body>
+</html>

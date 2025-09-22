@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title data-i18n="wallet.title">Wallet — RedVelvetLive</title>
+  <meta name="description" content="Gestiona tus direcciones EVM, marca principal y verifica propiedad firmando un challenge.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    .addr{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+    .pill{display:inline-flex;align-items:center;gap:.35rem;border:1px solid var(--rv-border);padding:.2rem .6rem;border-radius:999px;font-size:.85rem}
+    .ok{color:#0a7}.warn{color:#f59e0b}.bad{color:#e11}
+    .list-row{display:flex;gap:.75rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .row-actions{display:flex;gap:.35rem;flex-wrap:wrap}
+    input{width:100%;padding:12px;border-radius:12px;border:1px solid var(--rv-border);background:var(--rv-surface);color:var(--rv-text)}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div data-include="header"></div>
+
+  <main class="main-container grid grid-2" style="--grid-min:320px">
+    <!-- Lista de Wallets -->
+    <section class="card" aria-labelledby="wlTitle">
+      <h2 id="wlTitle" data-i18n="wallet.myWallets">Mis wallets</h2>
+      <div id="walletList" class="grid" style="gap:10px"></div>
+
+      <hr style="margin:14px 0;border-color:var(--rv-border)">
+
+      <div class="grid" style="gap:10px">
+        <label data-i18n="wallet.newWalletLabel">Nueva dirección (EVM, p. ej. BSC)</label>
+        <input id="newWallet" class="addr" placeholder="0x..." autocomplete="off" spellcheck="false" inputmode="text" />
+        <button class="btn" id="btnAdd" data-i18n="wallet.add">Añadir</button>
+        <div id="msgList" class="muted" role="status" aria-live="polite" style="display:none"></div>
+      </div>
+    </section>
+
+    <!-- Verificación -->
+    <section class="card" aria-labelledby="verTitle">
+      <h3 id="verTitle" data-i18n="wallet.verifyTitle">Verificación por firma</h3>
+      <p class="muted" data-i18n="wallet.verifyDesc">Firma un mensaje para probar que controlas la clave privada de tu dirección.</p>
+
+      <div class="grid" style="gap:10px">
+        <label data-i18n="wallet.selectWallet">Selecciona la wallet a verificar</label>
+        <select id="selWallet"></select>
+        <button class="btn" id="btnChallenge" data-i18n="wallet.requestChallenge">Solicitar challenge</button>
+        <button class="btn secondary" id="btnSign" data-i18n="wallet.signVerify" disabled>Firmar y verificar</button>
+        <div class="muted" style="font-size:.9rem" data-i18n="wallet.metamaskRequired">
+          Necesitas una wallet como <strong>MetaMask</strong> instalada en tu navegador.
+        </div>
+        <div id="msgVer" class="muted" role="status" aria-live="polite" style="display:none"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer + Cookies -->
+  <div data-include="cookies"></div>
+  <div data-include="footer"></div>
+
+  <!-- Config -->
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <!-- Scripts base -->
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/analytics.js" defer></script>
+  <script type="module">
+    import { initI18n } from '/js/i18n.js';
+    initI18n();
+  </script>
+
+  <!-- Script funcional -->
+  <script src="/js/wallet-logic.js" defer></script>
+</body>
+</html>

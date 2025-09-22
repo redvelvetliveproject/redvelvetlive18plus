@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title data-i18n="privacy.title">Política de Privacidad — RedVelvetLive</title>
+  <meta name="description" data-i18n="privacy.description" content="Política de privacidad de RedVelvetLive (GDPR/LGPD): datos, base legal, derechos ARCO, cookies, retención, seguridad y contacto.">
+  <link rel="canonical" href="https://www.redvelvetlive.com/privacy.html">
+  <meta name="color-scheme" content="dark light">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Política de Privacidad — RedVelvetLive">
+  <meta property="og:description" content="Conoce cómo tratamos tus datos personales, tus derechos y cómo gestionamos cookies y seguridad.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.redvelvetlive.com/privacy.html">
+  <meta property="og:image" content="/assets/hero/cover.webp">
+
+  <!-- JSON-LD Policy -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"PrivacyPolicy",
+    "name":"Política de Privacidad – RedVelvetLive",
+    "url":"https://www.redvelvetlive.com/privacy.html",
+    "publisher":{"@type":"Organization","name":"RedVelvetLive"}
+  }
+  </script>
+
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    .toc{display:flex;gap:.5rem;flex-wrap:wrap;margin:.75rem 0 1rem}
+    .toc a{border:1px solid var(--border);border-radius:999px;padding:.25rem .6rem;font-size:.9rem}
+    .legal-callout{padding:.75rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--panel-2)}
+    .section small{color:var(--muted)}
+    .badge-law{border:1px dashed var(--border);border-radius:6px;padding:2px 6px;font-size:.75rem}
+    .note{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:.75rem}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div data-include="header"></div>
+
+  <main class="main-container">
+    <header class="panel" style="padding-bottom:12px">
+      <h1 data-i18n="privacy.heading">Política de Privacidad</h1>
+      <p class="muted">
+        <small data-i18n="privacy.updated">Última actualización:</small>
+        <time id="ppLastUpdate" datetime="">—</time>
+      </p>
+      <p><span class="badge-law">GDPR</span> <span class="badge-law">LGPD</span> <span class="badge-law">+18</span></p>
+    </header>
+
+    <section class="legal-callout" role="note" aria-label="Controlador de datos">
+      <p data-i18n="privacy.controller">
+        <strong>Controlador de datos:</strong>
+        <span id="ppCompany">[[NOMBRE_LEGAL_EMPRESA]]</span>,
+        <span id="ppAddress">[[DIRECCION_POSTAL]]</span>,
+        <a id="ppLegalMail" href="mailto:[[EMAIL_LEGAL]]">[[EMAIL_LEGAL]]</a>
+      </p>
+    </section>
+
+    <!-- TOC -->
+    <nav class="toc" aria-label="Índice rápido">
+      <a href="#data" data-i18n="privacy.nav.data">Datos que Recopilamos</a>
+      <a href="#bases" data-i18n="privacy.nav.bases">Finalidades y Base Legal</a>
+      <a href="#rights" data-i18n="privacy.nav.rights">Tus Derechos</a>
+      <a href="#ret" data-i18n="privacy.nav.ret">Conservación</a>
+      <a href="#sec" data-i18n="privacy.nav.sec">Seguridad</a>
+      <a href="#share" data-i18n="privacy.nav.share">Compartición</a>
+      <a href="#xborder" data-i18n="privacy.nav.xborder">Transferencias</a>
+      <a href="#cookies" data-i18n="privacy.nav.cookies">Cookies</a>
+      <a href="#adult" data-i18n="privacy.nav.adult">Contenido Sensible</a>
+      <a href="#dpo" data-i18n="privacy.nav.dpo">Contacto</a>
+      <a href="#changes" data-i18n="privacy.nav.changes">Cambios</a>
+    </nav>
+  </main>
+
+  <!-- Footer -->
+  <div data-include="footer"></div>
+
+  <!-- Config -->
+  <script>
+    window.API_BASE  = window.API_BASE  || import.meta.env?.VITE_API_BASE  || '/api';
+    window.AUTH_BASE = window.AUTH_BASE || import.meta.env?.VITE_AUTH_BASE || '/auth';
+  </script>
+
+  <!-- Scripts base -->
+  <script src="/js/includes.js" defer></script>
+  <script src="/js/navigation.js" defer></script>
+  <script src="/js/analytics.js" defer></script>
+  <script src="/js/i18n.js" defer></script>
+
+  <!-- Interacciones -->
+  <script>
+    (function(){
+      const el = document.getElementById('ppLastUpdate');
+      if (!el) return;
+      const dt = new Date();
+      el.dateTime = dt.toISOString().split('T')[0];
+      el.textContent = dt.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
+    })();
+  </script>
+</body>
+</html>
