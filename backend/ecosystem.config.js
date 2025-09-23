@@ -1,19 +1,21 @@
+// backend/ecosystem.config.js
 export default {
   apps: [
     {
       name: "redvelvetlive-api",
-      script: "src/server.js",
-      instances: "1",         // Puedes poner "max" para usar todos los cores
-      exec_mode: "fork",      // fork = un proceso, cluster = varios
+      script: "./src/server.js",   // entrypoint correcto
+      instances: 1,                // "1" para mantenerlo simple, puedes usar "max"
+      exec_mode: "fork",           // cluster si quieres usar todos los cores
       watch: false,
-      env_development: {
+      env: {
         NODE_ENV: "development",
-        PORT: 3001,
+        PORT: 3001                 // desarrollo local
       },
       env_production: {
         NODE_ENV: "production",
-        PORT: 8080,
-      },
-    },
-  ],
-};
+        PORT: 3001                 // 🔥 mantén 3001, porque tu Nginx hace proxy_pass a 3001
+      }
+    }
+  ]
+}
+
