@@ -1,11 +1,11 @@
-// backend/src/server.js
 import 'dotenv/config';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import pinoHttp from 'pino-http';
+import cors from 'cors';
 
 import logger from './config/logger.js';
-import buildCors from './config/cors.js';
+import buildCors from './config/cors.js'; // lo mantenemos si lo usas internamente
 import security from './config/security.js';
 import { mountCsrf } from './config/csrf.js';
 import connectDB from './config/db.js';
@@ -20,32 +20,61 @@ const {
   NODE_ENV = 'development',
   PORT = 5000,
   PUBLIC_URL = `http://localhost:${PORT}`,
+  FRONTEND_ORIGIN
 } = process.env;
 
 const app = express();
 app.set('trust proxy', 1);
 
-// Logs, CORS, seguridad
+// Logs
 app.use(pinoHttp({ logger }));
-app.use(buildCors());
+
+// =========================
+// 🌐 CORS dinámico
+// =========================
+if (FRONTEND_ORIGIN) {
+  const allowed = FRONTEND_ORIGIN.split(",").map(s => s.trim());
+  app.use(cors({
+    origin: (origin, cb) => {
+      if (!origin || allowed.includes(origin)) return cb(null, true);
+      cb(new Error("Not allowed by CORS"));
+    },
+    credentials: true
+  }));
+} else {
+  // fallback si no defines FRONTEND_ORIGIN
+  app.use(buildCors());
+}
+
+// =========================
+// 🔒 Seguridad
+// =========================
 security(app);
 
+// =========================
 // Parsers
+// =========================
 app.use(cookieParser());
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false }));
 
-// CSRF
+// =========================
+// 🛡️ CSRF
+// =========================
 mountCsrf(app, { basePath: '/api' });
 
-// DB
+// =========================
+// 📂 Conexión DB
+// =========================
 await connectDB();
 
-// API
+// =========================
+// 🚀 Rutas API
+// =========================
 app.use('/api/v1', apiV1);
 app.use('/api', apiV1);
 
-// Sitemap dinámico en la raíz del dominio
+// Sitemap dinámico en raíz
 app.use('/', sitemapPostsRouter);
 
 // Alias rápido de perfil
@@ -62,12 +91,23 @@ app.get('/api/users/profile', auth, async (req, res) => {
   });
 });
 
-// 404
+// =========================
+// 🩺 Healthcheck
+// =========================
+app.get('/health', (_req, res) => {
+  res.json({ ok: true, status: "running", env: NODE_ENV });
+});
+
+// =========================
+// ❌ 404
+// =========================
 app.use((req, res) => {
   res.status(404).json({ ok: false, error: 'Not found' });
 });
 
-// Handler de errores
+// =========================
+// ⚠️ Handler de errores
+// =========================
 app.use((err, req, res, _next) => {
   req.log?.error({ err }, 'Unhandled error');
   const status = err.status || 500;
@@ -78,7 +118,9 @@ app.use((err, req, res, _next) => {
   res.status(status).json({ ok: false, error: msg });
 });
 
-// Start
+// =========================
+// ▶️ Start
+// =========================
 app.listen(PORT, () => {
   logger.info({ msg: `Servidor en ${PUBLIC_URL} (env ${NODE_ENV})` });
 });
