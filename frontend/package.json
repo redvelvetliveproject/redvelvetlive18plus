@@ -1,24 +1,17 @@
 {
   "name": "redvelvetlive-frontend",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "Frontend estático de RedVelvetLive (optimizado)",
   "scripts": {
-    "clean": "rimraf dist .cache",
-    "copy": "copyfiles -u 1 --all public/**/* dist",
-    "min:css": "npx lightningcss public/css/main.css -o dist/css/main.css --minify",
-    "min:js": "npx esbuild public/js/*.js --bundle --minify --outdir=dist/js",
-    "min:assets": "copyfiles -u 1 --all public/assets/**/* dist && npx imagemin dist/assets/**/*.{jpg,jpeg,png,webp} --out-dir=dist/assets",
-    "build": "npm run clean && npm run copy && npm run min:css && npm run min:js && npm run min:assets",
-    "dev": "npx live-server public --port=5173 --open=index.html",
-    "start": "npx serve dist -l 5173",
-    "zip": "cd dist && zip -r ../frontend-dist.zip ."
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
-  "devDependencies": {
-    "copyfiles": "^2.4.1",
-    "rimraf": "^5.0.5",
-    "esbuild": "^0.23.0",
-    "lightningcss-cli": "^1.24.0",
-    "imagemin-cli": "^7.0.0"
+  "dependencies": {
+    "next": "14.2.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "ethers": "^6.13.2",
+    "axios": "^1.7.7"
   }
 }
