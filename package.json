@@ -1,0 +1,5 @@
+{
+  "name": "redvelvetlive",
+  "private": true,
+  "workspaces": ["backend", "frontend"]
+}
