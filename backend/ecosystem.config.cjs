@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: "redvelvetlive-api",
-      script: "./src/server.js",   // <--- aquí la corrección
-      instances: 1,                // o "max" para usar todos los núcleos
+      script: "./src/server.js",   // <--- Aquí está la corrección
+      instances: 1,
       exec_mode: "cluster",
       watch: false,
       env: {
