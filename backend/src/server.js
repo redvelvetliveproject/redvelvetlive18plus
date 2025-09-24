@@ -1,14 +1,17 @@
 // backend/src/server.js
-require('dotenv').config({
-  path: require('path').join(__dirname, '..', '.env')
-});
+import 'dotenv/config';
+import http from 'http';
+import app from './app.js';
+import logger from './config/logger.js';
 
-const http = require('http');
-const app = require('./app.js'); // ya dentro de src
-const PORT = process.env.PORT || 3001;
+const {
+  NODE_ENV = 'development',
+  PORT = process.env.PORT || 3001,
+  PUBLIC_URL = `http://localhost:${process.env.PORT || 3001}`,
+} = process.env;
 
 const server = http.createServer(app);
-server.listen(PORT, () => {
-  console.log(`🚀 API escuchando en puerto ${PORT} (NODE_ENV=${process.env.NODE_ENV || 'dev'})`);
-});
 
+server.listen(PORT, () => {
+  logger.info(`🚀 Servidor corriendo en ${PUBLIC_URL} (env: ${NODE_ENV})`);
+});
