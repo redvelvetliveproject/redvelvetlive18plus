@@ -18,15 +18,10 @@ import cronRouter from './routes/cron.js';
 import { auth } from './middlewares/auth.js';
 import User from './models/User.js';
 
-const {
-  NODE_ENV = 'development',
-  PUBLIC_URL = process.env.PUBLIC_URL || 'http://localhost:5000',
-} = process.env;
-
 const app = express();
 app.set('trust proxy', 1);
 
-// Logs, CORS y seguridad
+// Middlewares base
 app.use(pinoHttp({ logger }));
 app.use(buildCors());
 security(app);
@@ -39,17 +34,27 @@ app.use(express.urlencoded({ extended: false }));
 // CSRF
 mountCsrf(app, { basePath: '/api' });
 
-// Conexión a la BD
-await connectDB();
+// Conexión a la BD (si MONGO_URI está definido en tu .env)
+if (process.env.MONGO_URI) {
+  await connectDB();
+}
 
 // Rutas API
 app.use('/api/v1', apiV1);
-app.use('/api', apiV1);
 app.use('/api/payments', paymentsRouter);
 app.use('/api/cron', cronRouter);
 
 // Sitemap dinámico
 app.use('/', sitemapPostsRouter);
+
+// Healthcheck
+app.get('/health', (_req, res) => {
+  res.status(200).json({
+    ok: true,
+    msg: 'Backend corriendo en producción 🚀',
+    env: process.env.NODE_ENV || 'dev'
+  });
+});
 
 // Perfil rápido
 app.get('/api/users/profile', auth, async (req, res) => {
