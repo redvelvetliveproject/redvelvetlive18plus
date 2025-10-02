@@ -4,10 +4,11 @@ import cookieParser from 'cookie-parser';
 import pinoHttp from 'pino-http';
 import cors from 'cors';
 
-import logger from './config/logger.js';
-import security from './config/security.js';
-import { mountCsrf } from './config/csrf.js';
-import connectDB from './config/db.js';
+// IMPORTACIONES CORREGIDAS (subir un nivel desde src/)
+import logger from '../config/logger.js';
+import security from '../config/security.js';
+import { mountCsrf } from '../config/csrf.js';
+import connectDB from '../config/db.js';
 
 import apiV1 from './routes/index.js';
 import sitemapPostsRouter from './routes/sitemap.posts.routes.js';
@@ -40,7 +41,7 @@ if (FRONTEND_ORIGIN) {
   );
 } else {
   // Fallback: usar configuración estática de buildCors()
-  const buildCors = (await import('./config/cors.js')).default;
+  const buildCors = (await import('../config/cors.js')).default;
   app.use(buildCors());
 }
 
