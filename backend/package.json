@@ -12,6 +12,7 @@
   "dependencies": {
     "@metamask/eth-sig-util": "^7.0.1",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.2",
@@ -24,12 +25,14 @@
     "mongoose": "^8.5.2",
     "morgan": "^1.10.0",
     "node-fetch": "^3.3.2",
+    "pino-http": "^9.0.0",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
   }
 }
+
 
 
 
