@@ -10,8 +10,9 @@ import security from '../config/security.js';
 import { mountCsrf } from '../config/csrf.js';
 import connectDB from '../config/db.js';
 
+// Rutas principales
 import apiV1 from './routes/index.js';
-import sitemapPostsRouter from './routes/sitemap.posts.routes.js';
+import sitemapPostsRouter from './routes/sitemap.posts.routes.js'; // ✅ Sitemap integrado
 import { auth } from './middlewares/auth.js';
 import User from './models/User.js';
 
@@ -24,10 +25,10 @@ const {
 const app = express();
 app.set('trust proxy', 1);
 
-// Logging
+// Logging HTTP
 app.use(pinoHttp({ logger }));
 
-// CORS dinámico: si existe FRONTEND_ORIGIN lo usamos, si no, fallback a buildCors()
+// CORS dinámico o fallback
 if (FRONTEND_ORIGIN) {
   const allowed = FRONTEND_ORIGIN.split(',').map(s => s.trim());
   app.use(
@@ -40,7 +41,6 @@ if (FRONTEND_ORIGIN) {
     })
   );
 } else {
-  // Fallback: usar configuración estática de buildCors()
   const buildCors = (await import('../config/cors.js')).default;
   app.use(buildCors());
 }
@@ -59,17 +59,26 @@ mountCsrf(app, { basePath: '/api' });
 // Conexión a MongoDB
 await connectDB();
 
-// Rutas API
+// ==========================
+// 🔗 Rutas principales de la API
+// ==========================
 app.use('/api/v1', apiV1);
 app.use('/api', apiV1);
 
-// Sitemap
-app.use('/', sitemapPostsRouter);
+// ==========================
+// 🗺️ Ruta para sitemap
+// ==========================
+// Se recomienda mantener bajo /api/sitemap
+// Esto evita conflictos con otras rutas raíz
+app.use('/api/sitemap', sitemapPostsRouter);
 
-// Endpoint de perfil rápido
+// ==========================
+// 👤 Endpoint de perfil rápido
+// ==========================
 app.get('/api/users/profile', auth, async (req, res) => {
   const user = await User.findById(req.user.id).lean();
   if (!user) return res.status(404).json({ ok: false, error: 'User not found' });
+
   res.json({
     id: user._id,
     name: user.name,
@@ -80,17 +89,23 @@ app.get('/api/users/profile', auth, async (req, res) => {
   });
 });
 
-// Endpoint de salud (útil para verificar que la API está viva)
+// ==========================
+// 💓 Endpoint de salud
+// ==========================
 app.get('/health', (_req, res) => {
   res.json({ ok: true, status: 'running', env: NODE_ENV });
 });
 
-// 404 handler
+// ==========================
+// 🚫 404 Handler
+// ==========================
 app.use((req, res) => {
   res.status(404).json({ ok: false, error: 'Not found' });
 });
 
-// Error handler
+// ==========================
+// ⚠️ Error Handler Global
+// ==========================
 app.use((err, req, res, _next) => {
   req.log?.error({ err }, 'Unhandled error');
   const status = err.status || 500;
@@ -102,3 +117,4 @@ app.use((err, req, res, _next) => {
 });
 
 export default app;
+
