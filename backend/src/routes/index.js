@@ -24,9 +24,9 @@ import supportRoutes from './support.routes.js';
 
 const router = Router();
 
-/* ──────────── RUTAS API ────────────── */
+/* ────────────── RUTAS API ────────────── */
 
-// 🔄 Health + login
+// 🔄 Estado y autenticación
 router.use('/', healthRoutes);
 router.use('/auth', authRoutes);
 
@@ -47,4 +47,5 @@ router.use('/models/live', modelsLiveRoutes);
 router.use('/payments', paymentsRoutes);
 router.use('/support', supportRoutes);
 
+// ✅ Exportación principal
 export default router;
