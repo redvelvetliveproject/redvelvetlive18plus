@@ -6,17 +6,14 @@ import WalletChallenge from '../models/WalletChallenge.js';
 import crypto from 'crypto';
 import { recoverPersonalSignature } from '@metamask/eth-sig-util';
 
-// Router A: se monta en /users/me/wallets  => GET /:id/challenge
-export const userWalletChallengeRoutes = Router();
-
-// Router B: se monta en /wallet-challenge => POST /verify
-export const globalWalletChallengeRoutes = Router();
+// Creamos un solo router y unificamos las rutas
+const router = Router();
 
 /**
  * GET /api/users/me/wallets/:id/challenge
  * Genera un nuevo challenge para verificar una wallet
  */
-userWalletChallengeRoutes.get('/:id/challenge', auth, async (req, res) => {
+router.get('/users/me/wallets/:id/challenge', auth, async (req, res) => {
   const w = await Wallet.findOne({ _id: req.params.id, userId: req.user.id });
   if (!w) return res.status(404).json({ ok: false, error: 'Wallet no encontrada' });
 
@@ -27,7 +24,7 @@ userWalletChallengeRoutes.get('/:id/challenge', auth, async (req, res) => {
   );
 
   const now = new Date();
-  const expiresAt = new Date(now.getTime() + 10 * 60 * 1000); // 10 min
+  const expiresAt = new Date(now.getTime() + 10 * 60 * 1000); // 10 minutos
   const nonce = crypto.randomBytes(12).toString('hex');
 
   const challenge =
@@ -53,7 +50,7 @@ userWalletChallengeRoutes.get('/:id/challenge', auth, async (req, res) => {
  * POST /api/wallet-challenge/verify
  * Body: { walletId, signature }
  */
-globalWalletChallengeRoutes.post('/verify', auth, async (req, res) => {
+router.post('/wallet-challenge/verify', auth, async (req, res) => {
   const { walletId, signature } = req.body || {};
   if (!walletId || !signature) {
     return res.status(400).json({ ok: false, error: 'Parámetros faltantes' });
@@ -92,3 +89,7 @@ globalWalletChallengeRoutes.post('/verify', auth, async (req, res) => {
     return res.status(400).json({ ok: false, error: 'Firma inválida' });
   }
 });
+
+// ✅ Exportación por defecto (soluciona el error)
+export default router;
+
