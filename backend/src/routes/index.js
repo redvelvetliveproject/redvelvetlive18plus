@@ -11,7 +11,7 @@ import preferencesRoutes from './preferences.routes.js';
 
 // 👛 Wallets + Web3
 import walletsRoutes from './wallets.routes.js';
-import walletChallengeRoutes from './wallet-challenge.routes.js';
+import walletChallengeRoutes from './wallet-challenge.routes.js'; // ✅ Solo esta importación
 
 // 👩 Modelos y clientes
 import clientsRoutes from './clients.routes.js';
@@ -49,3 +49,4 @@ router.use('/support', supportRoutes);
 
 // ✅ Exportación principal
 export default router;
+
