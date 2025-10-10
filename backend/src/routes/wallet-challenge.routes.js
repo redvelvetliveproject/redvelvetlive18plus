@@ -6,7 +6,6 @@ import WalletChallenge from '../models/WalletChallenge.js';
 import crypto from 'crypto';
 import { recoverPersonalSignature } from '@metamask/eth-sig-util';
 
-// Creamos un solo router y unificamos las rutas
 const router = Router();
 
 /**
@@ -14,36 +13,41 @@ const router = Router();
  * Genera un nuevo challenge para verificar una wallet
  */
 router.get('/users/me/wallets/:id/challenge', auth, async (req, res) => {
-  const w = await Wallet.findOne({ _id: req.params.id, userId: req.user.id });
-  if (!w) return res.status(404).json({ ok: false, error: 'Wallet no encontrada' });
+  try {
+    const w = await Wallet.findOne({ _id: req.params.id, userId: req.user.id });
+    if (!w) return res.status(404).json({ ok: false, error: 'Wallet no encontrada' });
 
-  // Invalida challenges anteriores
-  await WalletChallenge.updateMany(
-    { userId: req.user.id, walletId: w._id, used: false, expiresAt: { $gt: new Date() } },
-    { $set: { used: true } }
-  );
+    // Invalida challenges anteriores
+    await WalletChallenge.updateMany(
+      { userId: req.user.id, walletId: w._id, used: false, expiresAt: { $gt: new Date() } },
+      { $set: { used: true } }
+    );
 
-  const now = new Date();
-  const expiresAt = new Date(now.getTime() + 10 * 60 * 1000); // 10 minutos
-  const nonce = crypto.randomBytes(12).toString('hex');
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + 10 * 60 * 1000); // 10 minutos
+    const nonce = crypto.randomBytes(12).toString('hex');
 
-  const challenge =
-    `RedVelvetLive: verifica tu wallet\n` +
-    `User:${req.user.id}\n` +
-    `Wallet:${w._id}\n` +
-    `Address:${w.address}\n` +
-    `Nonce:${nonce}\n` +
-    `Expires:${expiresAt.toISOString()}`;
+    const challenge =
+      `RedVelvetLive: verifica tu wallet\n` +
+      `User:${req.user.id}\n` +
+      `Wallet:${w._id}\n` +
+      `Address:${w.address}\n` +
+      `Nonce:${nonce}\n` +
+      `Expires:${expiresAt.toISOString()}`;
 
-  await WalletChallenge.create({
-    userId: req.user.id,
-    walletId: w._id,
-    address: w.address,
-    challenge,
-    expiresAt,
-  });
+    await WalletChallenge.create({
+      userId: req.user.id,
+      walletId: w._id,
+      address: w.address,
+      challenge,
+      expiresAt,
+    });
 
-  res.json({ ok: true, challenge, expiresAt });
+    return res.json({ ok: true, challenge, expiresAt });
+  } catch (err) {
+    console.error('Error en /wallets/:id/challenge', err);
+    return res.status(500).json({ ok: false, error: 'internal_error' });
+  }
 });
 
 /**
@@ -56,19 +60,19 @@ router.post('/wallet-challenge/verify', auth, async (req, res) => {
     return res.status(400).json({ ok: false, error: 'Parámetros faltantes' });
   }
 
-  const w = await Wallet.findOne({ _id: walletId, userId: req.user.id });
-  if (!w) return res.status(404).json({ ok: false, error: 'Wallet no encontrada' });
-
-  const chal = await WalletChallenge.findOne({
-    userId: req.user.id,
-    walletId: w._id,
-    used: false,
-    expiresAt: { $gt: new Date() },
-  }).sort({ createdAt: -1 });
-
-  if (!chal) return res.status(410).json({ ok: false, error: 'Challenge expirado o inexistente' });
-
   try {
+    const w = await Wallet.findOne({ _id: walletId, userId: req.user.id });
+    if (!w) return res.status(404).json({ ok: false, error: 'Wallet no encontrada' });
+
+    const chal = await WalletChallenge.findOne({
+      userId: req.user.id,
+      walletId: w._id,
+      used: false,
+      expiresAt: { $gt: new Date() },
+    }).sort({ createdAt: -1 });
+
+    if (!chal) return res.status(410).json({ ok: false, error: 'Challenge expirado o inexistente' });
+
     const signer = recoverPersonalSignature({
       data: `0x${Buffer.from(chal.challenge, 'utf8').toString('hex')}`,
       signature,
@@ -85,11 +89,14 @@ router.post('/wallet-challenge/verify', auth, async (req, res) => {
     await w.save();
 
     return res.json({ ok: true, verified: true });
-  } catch (e) {
+  } catch (err) {
+    console.error('Error en /wallet-challenge/verify', err);
     return res.status(400).json({ ok: false, error: 'Firma inválida' });
   }
 });
 
-// ✅ Exportación por defecto (soluciona el error)
+// ✅ ESTA LÍNEA ES LA CLAVE
 export default router;
+
+
 
