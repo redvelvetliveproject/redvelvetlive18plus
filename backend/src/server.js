@@ -1,3 +1,4 @@
+// backend/src/server.js
 import 'dotenv/config';
 import http from 'http';
 import app from './app.js';
@@ -21,3 +22,4 @@ process.on('uncaughtException', (err) => {
   console.error('❌ Uncaught Exception:', err);
   process.exit(1);
 });
+
