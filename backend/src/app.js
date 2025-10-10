@@ -1,10 +1,10 @@
+// backend/src/app.js
 import 'dotenv/config';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import pinoHttp from 'pino-http';
 import cors from 'cors';
 
-// IMPORTACIONES CORREGIDAS (subir un nivel desde src/)
 import logger from '../config/logger.js';
 import security from '../config/security.js';
 import { mountCsrf } from '../config/csrf.js';
@@ -27,7 +27,7 @@ app.set('trust proxy', 1);
 // Logging
 app.use(pinoHttp({ logger }));
 
-// CORS dinámico: si existe FRONTEND_ORIGIN lo usamos, si no, fallback a buildCors()
+// CORS dinámico
 if (FRONTEND_ORIGIN) {
   const allowed = FRONTEND_ORIGIN.split(',').map(s => s.trim());
   app.use(
@@ -40,12 +40,11 @@ if (FRONTEND_ORIGIN) {
     })
   );
 } else {
-  // Fallback: usar configuración estática de buildCors()
   const buildCors = (await import('../config/cors.js')).default;
   app.use(buildCors());
 }
 
-// Seguridad (helmet, rate-limit, hpp, xss-clean)
+// Seguridad general
 security(app);
 
 // Parsers
@@ -56,17 +55,17 @@ app.use(express.urlencoded({ extended: false }));
 // CSRF
 mountCsrf(app, { basePath: '/api' });
 
-// Conexión a MongoDB
+// Conexión MongoDB
 await connectDB();
 
-// Rutas API
+// Rutas principales
 app.use('/api/v1', apiV1);
 app.use('/api', apiV1);
 
 // Sitemap
 app.use('/', sitemapPostsRouter);
 
-// Endpoint de perfil rápido
+// Endpoint de perfil
 app.get('/api/users/profile', auth, async (req, res) => {
   const user = await User.findById(req.user.id).lean();
   if (!user) return res.status(404).json({ ok: false, error: 'User not found' });
@@ -80,7 +79,7 @@ app.get('/api/users/profile', auth, async (req, res) => {
   });
 });
 
-// Endpoint de salud (útil para verificar que la API está viva)
+// Endpoint de salud
 app.get('/health', (_req, res) => {
   res.json({ ok: true, status: 'running', env: NODE_ENV });
 });
@@ -102,3 +101,4 @@ app.use((err, req, res, _next) => {
 });
 
 export default app;
+
