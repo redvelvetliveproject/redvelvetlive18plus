@@ -1,4 +1,4 @@
-// src/routes/index.js
+// backend/src/routes/index.js
 import { Router } from 'express';
 
 // 🧠 Core
@@ -16,13 +16,11 @@ import walletChallengeRoutes from './wallet-challenge.routes.js';
 // 👩 Modelos y clientes
 import clientsRoutes from './clients.routes.js';
 import modelsRoutes from './models.routes.js';
+import modelsLiveRoutes from './models.live.routes.js';
 
 // 💰 Pagos + soporte
 import paymentsRoutes from './payments.routes.js';
 import supportRoutes from './support.routes.js';
-
-// 📡 Streaming Livepeer (opcional, puede estar vacío al inicio)
-import modelsLiveRoutes from './models.live.routes.js';
 
 const router = Router();
 
@@ -50,18 +48,3 @@ router.use('/payments', paymentsRoutes);
 router.use('/support', supportRoutes);
 
 export default router;
-
-import modelRoutes from "./model.js";
-import walletRoutes from "./wallet.js";
-
-// ... otras rutas
-router.use("/model", modelRoutes);
-router.use("/wallet", walletRoutes);
-
-import modelRoutes from './model.routes.js';
-import walletRoutes from './wallet.routes.js';
-
-// …otras rutas…
-
-router.use('/model', modelRoutes);
-router.use('/wallet', walletRoutes);
