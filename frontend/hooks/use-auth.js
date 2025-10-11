@@ -1,6 +1,5 @@
 // frontend/hooks/use-auth.js
-// Encapsula login, logout, refresh y profile usando cookies httpOnly
-// Usa tu wrapper de API existente (use-api.js)
+// Encapsula login, logout, refresh y perfil usando cookies httpOnly + API segura
 
 import { createApi } from './use-api.js';
 
@@ -9,7 +8,7 @@ const LS_USER = 'rvl_user'; // opcional: cachear perfil para UI rápida
 export function createAuth() {
   const api = createApi();
 
-  /** Guarda/borra el perfil en localStorage (opcional) */
+  /** 📦 Guarda o borra el perfil en localStorage (opcional, solo para UI) */
   function cacheUser(user) {
     try {
       if (user) localStorage.setItem(LS_USER, JSON.stringify(user));
@@ -17,7 +16,7 @@ export function createAuth() {
     } catch {}
   }
 
-  /** Obtiene el perfil desde el servidor (o cache si existe) */
+  /** 👤 Obtiene perfil actual desde cache o API */
   async function getProfile({ force = false } = {}) {
     if (!force) {
       try {
@@ -25,50 +24,69 @@ export function createAuth() {
         if (raw) return JSON.parse(raw);
       } catch {}
     }
-    const user = await api.get('/users/profile'); // requiere cookie httpOnly 'token'
-    if (user && user.id) cacheUser(user);
-    return user;
+
+    try {
+      const user = await api.get('/users/profile');
+      if (user?.id) cacheUser(user);
+      return user;
+    } catch (err) {
+      console.error('[Auth] No se pudo obtener el perfil:', err.message);
+      return null;
+    }
   }
 
-  /** Login con email+password */
+  /** 🔑 Login con email y contraseña */
   async function loginWithEmail({ email, password, captchaToken, persistUser = true }) {
-    const payload = { email, password };
-    if (captchaToken) payload.captchaToken = captchaToken;
+    if (!email || !password) throw new Error('Email y contraseña requeridos');
+    const payload = { email, password, captchaToken };
 
     const res = await api.post('/auth/login', payload);
     if (persistUser && res?.user) cacheUser(res.user);
     return res;
   }
 
-  /** Login con wallet (sin password) */
+  /** 🔐 Login con wallet */
   async function loginWithWallet({ wallet, captchaToken, persistUser = true }) {
-    const payload = { wallet };
-    if (captchaToken) payload.captchaToken = captchaToken;
+    if (!wallet) throw new Error('Dirección de wallet requerida');
+    const payload = { wallet, captchaToken };
 
     const res = await api.post('/auth/login', payload);
     if (persistUser && res?.user) cacheUser(res.user);
     return res;
   }
 
-  /** Registro (email+password o wallet) */
+  /** 🧾 Registro (email o wallet) */
   async function register({ name, email, password, wallet, role = 'client', captchaToken, persistUser = true }) {
-    const payload = { name, email, password, wallet, role };
-    if (captchaToken) payload.captchaToken = captchaToken;
-
+    const payload = { name, email, password, wallet, role, captchaToken };
     const res = await api.post('/auth/register', payload);
     if (persistUser && res?.user) cacheUser(res.user);
     return res;
   }
 
-  /** Refresca JWT */
+  /** ♻️ Refresca JWT si existe cookie válida */
   async function refresh() {
-    return api.post('/auth/refresh', {});
+    try {
+      return await api.post('/auth/refresh', {});
+    } catch (e) {
+      console.warn('[Auth] No se pudo refrescar sesión:', e.message);
+      return null;
+    }
   }
 
-  /** Logout en servidor y limpieza local */
+  /** 🚪 Cierra sesión en servidor y limpia cache */
   async function logout() {
-    try { await api.post('/auth/logout', {}); } catch {}
+    try {
+      await api.post('/auth/logout', {});
+    } catch (e) {
+      console.warn('[Auth] Error al cerrar sesión:', e.message);
+    }
     cacheUser(null);
+  }
+
+  /** ✅ Verifica si hay sesión activa */
+  async function isLoggedIn() {
+    const user = await getProfile();
+    return !!user?.id;
   }
 
   return {
@@ -78,5 +96,7 @@ export function createAuth() {
     register,
     refresh,
     logout,
+    isLoggedIn,
   };
 }
+
