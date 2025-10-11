@@ -1,5 +1,5 @@
 // frontend/hooks/use-form.js
-// Validación mínima y helpers para formularios.
+// Validación avanzada y helpers accesibles para formularios.
 
 export function createForm(el, { onSubmit, validators = {}, onValidChange } = {}) {
   if (!el) throw new Error('Form element required');
@@ -17,14 +17,24 @@ export function createForm(el, { onSubmit, validators = {}, onValidChange } = {}
     if (input.type === 'email' && input.value) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
     }
+    if (input.minLength && input.value.length < input.minLength) return false;
+    if (input.pattern && !new RegExp(input.pattern).test(input.value)) return false;
     return true;
   }
 
   function toggleError(input, on) {
-    if (on) input.setAttribute('aria-invalid', 'true');
-    else input.removeAttribute('aria-invalid');
-    const small = input.closest('label, .field')?.querySelector('.field-error');
-    if (small) small.style.display = on ? 'block' : 'none';
+    const fieldError = input.closest('label, .field')?.querySelector('.field-error');
+    if (on) {
+      input.setAttribute('aria-invalid', 'true');
+      if (fieldError) {
+        fieldError.textContent = input.getAttribute('data-error') || 'Campo inválido';
+        fieldError.style.display = 'block';
+        input.setAttribute('aria-describedby', fieldError.id || `${input.name}-error`);
+      }
+    } else {
+      input.removeAttribute('aria-invalid');
+      if (fieldError) fieldError.style.display = 'none';
+    }
   }
 
   function validateForm() {
@@ -36,9 +46,13 @@ export function createForm(el, { onSubmit, validators = {}, onValidChange } = {}
     return ok;
   }
 
+  function getValues() {
+    return Object.fromEntries(new FormData(el));
+  }
+
   el.addEventListener('input', (e) => {
     const target = e.target;
-    if (target && (target.matches('input,textarea,select'))) {
+    if (target && target.matches('input,textarea,select')) {
       validateField(target);
       if (onValidChange) onValidChange(state.valid);
     }
@@ -47,8 +61,9 @@ export function createForm(el, { onSubmit, validators = {}, onValidChange } = {}
   el.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    if (onSubmit) await onSubmit(new FormData(el), e);
+    if (onSubmit) await onSubmit(new FormData(el), e, getValues());
   });
 
-  return { validate: validateForm };
+  return { validate: validateForm, getValues };
 }
+
