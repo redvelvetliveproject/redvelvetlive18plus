@@ -1,6 +1,7 @@
 // backend/src/models/User.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import slugify from 'slugify';
 
 const { Schema, model } = mongoose;
 
@@ -19,10 +20,38 @@ const PreferencesSchema = new Schema(
   { _id: false }
 );
 
+const SocialLinksSchema = new Schema(
+  {
+    instagram: String,
+    twitter: String,
+    onlyfans: String,
+    website: String,
+  },
+  { _id: false }
+);
+
+const AvatarSchema = new Schema(
+  {
+    small: { type: String, default: '' },
+    large: { type: String, default: '' },
+  },
+  { _id: false }
+);
+
+const GallerySchema = new Schema(
+  {
+    url: { type: String, required: true },
+    caption: { type: String },
+  },
+  { _id: false }
+);
+
 const UserSchema = new Schema(
   {
     // 👤 Identidad
     name: { type: String, trim: true, minlength: 2, maxlength: 120, required: true },
+    slug: { type: String, unique: true, index: true }, // 🌐 Perfil SEO
+
     email: {
       type: String,
       trim: true,
@@ -45,37 +74,33 @@ const UserSchema = new Schema(
       match: [/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'],
     },
 
-    // 🔐 Control y roles
+    // 🔐 Control
     role: { type: String, enum: ROLES, default: 'client', index: true },
     status: { type: String, enum: STATUSES, default: 'active', index: true },
 
     // 🌍 Configuración
     locale: { type: String, enum: LOCALES, default: 'es' },
+    country: { type: String, uppercase: true, maxlength: 2, index: true }, // 🌍 ISO-2
     preferences: { type: PreferencesSchema, default: undefined },
 
     // 📜 Perfil público
     bio: { type: String, maxlength: 300 },
-    socialLinks: {
-      instagram: String,
-      twitter: String,
-      onlyfans: String,
-      website: String,
-    },
+    socialLinks: { type: SocialLinksSchema, default: {} },
 
-    // 📸 Avatar optimizado
-    avatar: {
-      small: { type: String, default: '' }, // 128×128
-      large: { type: String, default: '' }, // 720×720
-    },
+    // 📸 Imagen
+    avatar: { type: AvatarSchema, default: {} },
+    gallery: { type: [GallerySchema], default: [] }, // 📁 Hasta 5 fotos públicas
 
-    // 📊 Estadísticas base
+    // 📊 Métricas
     stats: {
       followers: { type: Number, default: 0 },
       tips: { type: Number, default: 0 },
       totalEarnings: { type: Number, default: 0 },
+      streamingMinutes: { type: Number, default: 0 }, // ⏱️ Tiempo total transmitido
     },
+    popularity: { type: Number, default: 0, index: true }, // Calculado automático
 
-    // 📅 Control de sesiones
+    // 🕐 Sesiones
     lastLoginAt: { type: Date },
     loginCount: { type: Number, default: 0 },
   },
@@ -84,48 +109,54 @@ const UserSchema = new Schema(
 
 // 🔐 Hash automático antes de guardar
 UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password') || !this.password) return next();
-  try {
+  // Slug automático SEO-friendly
+  if (this.isModified('name') || !this.slug) {
+    this.slug = slugify(`rvl-${this.name}`, { lower: true, strict: true });
+  }
+
+  // Cálculo automático de popularidad
+  this.popularity = (this.stats.followers * 2) + this.stats.tips;
+
+  // Hash de contraseña
+  if (this.isModified('password') && this.password) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (e) {
-    next(e);
   }
+
+  next();
 });
 
-// 🧠 Métodos auxiliares
-UserSchema.methods.setPassword = async function (plain) {
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(plain, salt);
-};
+// Métodos
 UserSchema.methods.comparePassword = async function (candidate = '') {
   return this.password ? bcrypt.compare(candidate, this.password) : false;
 };
+
 UserSchema.methods.toSafeJSON = function () {
   return {
     id: this._id,
     name: this.name,
+    slug: this.slug,
     email: this.email,
     wallet: this.wallet,
     role: this.role,
     status: this.status,
     locale: this.locale,
-    preferences: this.preferences,
+    country: this.country,
     bio: this.bio,
     socialLinks: this.socialLinks,
     avatar: this.avatar,
+    gallery: this.gallery,
     stats: this.stats,
+    popularity: this.popularity,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
   };
 };
 
-// 📊 Índices comunes
-UserSchema.index({ name: 'text', wallet: 'text' });
-UserSchema.index({ email: 1 }, { unique: true, sparse: true });
-UserSchema.index({ wallet: 1 }, { unique: true, sparse: true });
-UserSchema.index({ role: 1, status: 1 });
+// Índices
+UserSchema.index({ name: 'text', slug: 'text' });
+UserSchema.index({ country: 1, locale: 1, popularity: -1 });
 
 const User = mongoose.models.User || model('User', UserSchema);
 export default User;
+
