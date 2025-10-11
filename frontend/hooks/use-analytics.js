@@ -1,5 +1,5 @@
 // frontend/hooks/use-analytics.js
-// Wrapper mínimo para GA4 (gtag) con fallback seguro a console.log
+// Wrapper para GA4 (gtag) con fallback seguro a console.log
 
 export function createAnalytics({ enabled = true, debug = false } = {}) {
   const hasGA =
@@ -36,7 +36,7 @@ export function createAnalytics({ enabled = true, debug = false } = {}) {
     }
   }
 
-  // Nuevo: inyecta script GA4 dinámicamente
+  // ✅ Nuevo: inicialización segura de GA4
   function init(measurementId) {
     if (!measurementId || typeof document === 'undefined') return;
     if (document.getElementById('ga4-script')) return; // evitar duplicados
@@ -48,7 +48,9 @@ export function createAnalytics({ enabled = true, debug = false } = {}) {
     document.head.appendChild(script1);
 
     window.dataLayer = window.dataLayer || [];
-    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag = function () {
+      window.dataLayer.push(arguments);
+    };
     window.gtag('js', new Date());
     window.gtag('config', measurementId);
   }
