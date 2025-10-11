@@ -9,12 +9,13 @@ export default function Unauthorized() {
         style={{
           textAlign: 'center',
           padding: '5rem 2rem',
-          color: '#ff003c',
+          maxWidth: '600px',
+          margin: '0 auto',
         }}
       >
-        <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>🚫 Acceso Denegado</h1>
-        <p style={{ fontSize: '1.3rem', marginBottom: '2rem' }}>
-          No tienes permisos para acceder a esta sección.
+        <h1 style={{ fontSize: '3rem', marginBottom: '1rem', color: '#ff003c' }}>🚫 Acceso Denegado</h1>
+        <p style={{ fontSize: '1.3rem', marginBottom: '2rem', color: '#555' }}>
+          No tienes permisos para acceder a esta sección. Por favor inicia sesión con una cuenta autorizada o contacta con soporte.
         </p>
         <a
           href="/"
@@ -34,3 +35,4 @@ export default function Unauthorized() {
     </Layout>
   );
 }
+
