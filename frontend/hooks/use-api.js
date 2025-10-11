@@ -1,10 +1,18 @@
 // frontend/hooks/use-api.js
-// Minimal wrapper para llamadas a la API con cookies httpOnly.
+// Wrapper para llamadas a la API con cookies httpOnly y base dinámica
 
 import { useMemo } from 'react';
 
-export function createApi(base = (window.API_BASE || import.meta.env?.VITE_API_BASE || '/api')) {
+export function createApi(
+  base =
+    process.env.NEXT_PUBLIC_API_URL || 
+    import.meta.env?.VITE_API_BASE || 
+    (typeof window !== 'undefined' && window.API_BASE) || 
+    '/api'
+) {
   async function request(path, { method = 'GET', headers = {}, body, ...rest } = {}) {
+    const url = `${base.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+
     const init = {
       method,
       credentials: 'include',
@@ -19,13 +27,19 @@ export function createApi(base = (window.API_BASE || import.meta.env?.VITE_API_B
       init.body = body; // no tocar headers
     }
 
-    const res = await fetch(`${base}${path}`, init);
+    let res;
+    try {
+      res = await fetch(url, init);
+    } catch (networkErr) {
+      console.error('[API] Error de red o CORS:', networkErr);
+      throw new Error('No se pudo conectar con el servidor. Verifica tu conexión o el dominio de la API.');
+    }
 
     let data = null;
     try {
       data = await res.json();
     } catch {
-      /* noop */
+      // Si no es JSON, no pasa nada
     }
 
     if (!res.ok) {
@@ -56,3 +70,4 @@ export function createApi(base = (window.API_BASE || import.meta.env?.VITE_API_B
 export function useApi(base) {
   return useMemo(() => createApi(base), [base]);
 }
+
