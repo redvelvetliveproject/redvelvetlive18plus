@@ -1,8 +1,8 @@
+// frontend/components/Dashboard.jsx
 import React from 'react';
-import { createAuth, createApi, createAnalytics } from '../hooks';
+import { createAuth, createAnalytics } from '../hooks';
 
 const auth = createAuth();
-const api = createApi('/api');
 const analytics = createAnalytics({ debug: true });
 
 export default function Dashboard() {
@@ -19,3 +19,4 @@ export default function Dashboard() {
 
   return <button onClick={loadProfile}>Cargar perfil</button>;
 }
+
