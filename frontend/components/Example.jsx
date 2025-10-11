@@ -1,10 +1,12 @@
+// frontend/components/Example.jsx
 import React from 'react';
 import { useApi, createAnalytics } from '../hooks';
 
-const api = useApi('/api');
 const analytics = createAnalytics({ debug: true });
 
 export default function Example() {
+  const api = useApi();
+
   async function handleClick() {
     try {
       const data = await api.get('/users/profile');
