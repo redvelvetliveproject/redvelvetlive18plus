@@ -21,7 +21,8 @@ const PreferencesSchema = new Schema(
 
 const UserSchema = new Schema(
   {
-    name: { type: String, trim: true, minlength: 2, maxlength: 120 },
+    // 👤 Identidad
+    name: { type: String, trim: true, minlength: 2, maxlength: 120, required: true },
     email: {
       type: String,
       trim: true,
@@ -43,19 +44,45 @@ const UserSchema = new Schema(
       sparse: true,
       match: [/^0x[a-fA-F0-9]{40}$/, 'Invalid wallet address'],
     },
+
+    // 🔐 Control y roles
     role: { type: String, enum: ROLES, default: 'client', index: true },
-    locale: { type: String, enum: LOCALES, default: 'es' },
     status: { type: String, enum: STATUSES, default: 'active', index: true },
 
+    // 🌍 Configuración
+    locale: { type: String, enum: LOCALES, default: 'es' },
     preferences: { type: PreferencesSchema, default: undefined },
 
+    // 📜 Perfil público
+    bio: { type: String, maxlength: 300 },
+    socialLinks: {
+      instagram: String,
+      twitter: String,
+      onlyfans: String,
+      website: String,
+    },
+
+    // 📸 Avatar optimizado
+    avatar: {
+      small: { type: String, default: '' }, // 128×128
+      large: { type: String, default: '' }, // 720×720
+    },
+
+    // 📊 Estadísticas base
+    stats: {
+      followers: { type: Number, default: 0 },
+      tips: { type: Number, default: 0 },
+      totalEarnings: { type: Number, default: 0 },
+    },
+
+    // 📅 Control de sesiones
     lastLoginAt: { type: Date },
     loginCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
 
-// Hash automático antes de guardar
+// 🔐 Hash automático antes de guardar
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password') || !this.password) return next();
   try {
@@ -67,7 +94,7 @@ UserSchema.pre('save', async function (next) {
   }
 });
 
-// Helpers
+// 🧠 Métodos auxiliares
 UserSchema.methods.setPassword = async function (plain) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(plain, salt);
@@ -82,15 +109,20 @@ UserSchema.methods.toSafeJSON = function () {
     email: this.email,
     wallet: this.wallet,
     role: this.role,
-    locale: this.locale,
     status: this.status,
-    preferences: this.preferences || undefined,
+    locale: this.locale,
+    preferences: this.preferences,
+    bio: this.bio,
+    socialLinks: this.socialLinks,
+    avatar: this.avatar,
+    stats: this.stats,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
   };
 };
 
-// Índices
+// 📊 Índices comunes
+UserSchema.index({ name: 'text', wallet: 'text' });
 UserSchema.index({ email: 1 }, { unique: true, sparse: true });
 UserSchema.index({ wallet: 1 }, { unique: true, sparse: true });
 UserSchema.index({ role: 1, status: 1 });
