@@ -24,22 +24,22 @@ export function createApi(
       init.headers['Content-Type'] = init.headers['Content-Type'] || 'application/json';
       init.body = typeof body === 'string' ? body : JSON.stringify(body);
     } else if (body instanceof FormData) {
-      init.body = body; // no tocar headers
+      init.body = body; // No tocar headers
     }
 
     let res;
     try {
       res = await fetch(url, init);
     } catch (networkErr) {
-      console.error('[API] Error de red o CORS:', networkErr);
-      throw new Error('No se pudo conectar con el servidor. Verifica tu conexión o el dominio de la API.');
+      console.error('[API] ❌ Error de red o CORS:', networkErr);
+      throw new Error('No se pudo conectar con el servidor. Verifica tu conexión o dominio API.');
     }
 
     let data = null;
     try {
       data = await res.json();
     } catch {
-      // Si no es JSON, no pasa nada
+      // No es JSON, puede ser vacío
     }
 
     if (!res.ok) {
@@ -70,4 +70,5 @@ export function createApi(
 export function useApi(base) {
   return useMemo(() => createApi(base), [base]);
 }
+
 
