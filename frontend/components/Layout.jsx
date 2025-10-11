@@ -6,7 +6,7 @@ import { getSessionProfile, logout } from '../hooks/use-session.js';
 import { useEffect, useState } from 'react';
 import { t } from '../hooks/use-i18n.js';
 
-export default function Layout({ children }) {
+export default function Layout({ children, role = null }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -21,6 +21,36 @@ export default function Layout({ children }) {
     window.location.href = '/login.html';
   }
 
+  /** 🧠 Renderiza el menú según el rol */
+  function renderMenu() {
+    if (role === 'admin') {
+      return (
+        <>
+          <a href="/admin/dashboard.html">Panel Admin</a>
+          <a href="/admin/users.html">Usuarios</a>
+          <a href="/admin/config.html">Configuración</a>
+        </>
+      );
+    }
+    if (role === 'model') {
+      return (
+        <>
+          <a href="/dashboard.html">Dashboard</a>
+          <a href="/stats.html">Estadísticas</a>
+          <a href="/stream.html">Transmisión</a>
+        </>
+      );
+    }
+    // default: visitante o cliente
+    return (
+      <>
+        <a href="/explore.html">Explorar Modelos</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/contact.html">Contacto</a>
+      </>
+    );
+  }
+
   return (
     <div className="layout">
       {/* 🌐 HEADER */}
@@ -29,11 +59,7 @@ export default function Layout({ children }) {
           <a href="/"><img src="/assets/img/logo.svg" alt="RedVelvetLive" /></a>
         </div>
 
-        <nav className="main-nav">
-          <a href="/dashboard.html">{t('nav.profile')}</a>
-          <a href="/blog.html">Blog</a>
-          <a href="/contact.html">{t('footer.contact')}</a>
-        </nav>
+        <nav className="main-nav">{renderMenu()}</nav>
 
         <div className="header-tools">
           <LangToggle />
@@ -72,3 +98,4 @@ export default function Layout({ children }) {
     </div>
   );
 }
+
