@@ -4,13 +4,12 @@ import { ethers } from "ethers";
 import { useToast } from "./ToastManager.jsx";
 
 /**
- * 💎 TipInline – versión ligera para transmisiones en vivo
- * Ideal para Livepeer u otros players.
+ * 💎 TipInline – versión ligera para transmisiones en vivo (Livepeer o similar)
  *
  * Props:
  *  - model: { name, wallet }
  *  - defaultCurrency: "ONECOP" | "USDT"
- *  - autoHideMs: tiempo en ms antes de ocultar (por defecto 4000)
+ *  - autoHideMs: duración del modal visible (default: 4000ms)
  */
 export default function TipInline({
   model = {},
@@ -23,7 +22,7 @@ export default function TipInline({
   const [progress, setProgress] = useState(0);
   const { addToast } = useToast();
 
-  // 🧠 Contratos configurados (actualiza direcciones si cambian)
+  // ⚙️ Contratos configurados (usa tus direcciones reales al pasar a mainnet)
   const CONTRACTS = {
     ONECOP: {
       address: "0x61028e69fe97c7a4ddc4753bc6188d8cdbd6befe", // ✅ ONECOP Testnet
@@ -35,12 +34,13 @@ export default function TipInline({
     },
   };
 
-  // 🎛️ Mostrar/ocultar automáticamente
+  // 🧠 Mostrar el panel de tip
   const show = () => {
     setVisible(true);
     setProgress(0);
   };
 
+  // 🕒 Ocultar automáticamente tras cierto tiempo
   useEffect(() => {
     if (!visible) return;
     const timer = setInterval(() => {
@@ -56,7 +56,7 @@ export default function TipInline({
     return () => clearInterval(timer);
   }, [visible, autoHideMs]);
 
-  // ⚙️ Enviar tip
+  // 💰 Enviar tip con MetaMask
   async function sendTip(currency = defaultCurrency) {
     try {
       if (!window.ethereum) {
@@ -91,7 +91,7 @@ export default function TipInline({
       setAmount("");
       setVisible(false);
     } catch (err) {
-      console.error("Error tip:", err);
+      console.error("❌ Error tip:", err);
       addToast({
         message: "❌ No se pudo enviar el tip. Verifica tu red o conexión.",
         type: "error",
@@ -103,21 +103,24 @@ export default function TipInline({
 
   return (
     <>
-      {/* 🔘 Botón flotante que abre el tip rápido */}
+      {/* 🔘 Botón flotante para abrir la ventana de tip */}
       <button
         onClick={show}
         className="fixed bottom-5 right-5 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700
                    text-white font-bold py-3 px-5 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-red-400
-                   transition-all duration-300 z-50"
+                   transition-all duration-300 z-50 glow-success"
+        aria-label="Enviar tip"
       >
         💎 Tip
       </button>
 
-      {/* 💬 Caja flotante */}
+      {/* 💬 Ventana emergente para enviar el tip */}
       {visible && (
         <div
           className="fixed bottom-20 right-5 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700
-                     rounded-2xl p-4 w-72 shadow-2xl animate-fadeIn z-50"
+                     rounded-2xl p-4 w-72 shadow-2xl animate-fadeIn z-50 tip-inline-container"
+          role="dialog"
+          aria-modal="true"
         >
           <h4 className="text-sm font-semibold mb-2 text-neutral-900 dark:text-neutral-100">
             Enviar tip a {model.name || "la modelo"}
@@ -136,30 +139,4 @@ export default function TipInline({
 
           <div className="flex justify-center gap-3">
             <button
-              onClick={() => sendTip("ONECOP")}
-              disabled={sending}
-              className="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded-md font-semibold text-sm disabled:opacity-50"
-            >
-              💛 ONECOP
-            </button>
-            <button
-              onClick={() => sendTip("USDT")}
-              disabled={sending}
-              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md font-semibold text-sm disabled:opacity-50"
-            >
-              💚 USDT
-            </button>
-          </div>
-
-          {/* Barra de progreso visual */}
-          <div className="relative w-full h-1 bg-neutral-200 dark:bg-neutral-700 mt-3 rounded-full overflow-hidden">
-            <div
-              className="absolute left-0 top-0 h-full bg-red-600 transition-all duration-100 linear"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
+              onClick=
