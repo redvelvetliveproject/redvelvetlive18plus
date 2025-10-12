@@ -1,9 +1,10 @@
 // frontend/components/TipModal.jsx
 import React, { useState } from "react";
 import { ethers } from "ethers";
+import { useToast } from "./ToastManager.jsx";
 
 /**
- * Componente reutilizable para enviar tips (ONECOP / USDT).
+ * 💎 TipModal – Enviar tips (ONECOP / USDT)
  *
  * Props:
  *  - isOpen: bool → controla visibilidad del modal
@@ -19,10 +20,11 @@ export default function TipModal({
 }) {
   const [tipAmount, setTipAmount] = useState("");
   const [sending, setSending] = useState(false);
+  const { addToast } = useToast(); // ✅ Notificaciones visuales
 
   if (!isOpen) return null;
 
-  // 🔐 Configuración de contratos (actualiza según tus direcciones reales)
+  // 🔐 Configuración de contratos (ajusta si usas otras direcciones)
   const CONTRACTS = {
     ONECOP: {
       address: "0x61028e69fe97c7a4ddc4753bc6188d8cdbd6befe", // ✅ ONECOP Testnet
@@ -38,7 +40,10 @@ export default function TipModal({
   async function sendTip(currency = defaultCurrency) {
     try {
       if (!window.ethereum) {
-        alert("Por favor instala MetaMask para continuar.");
+        addToast({
+          message: "🚫 Por favor instala MetaMask para continuar.",
+          type: "error",
+        });
         return;
       }
 
@@ -54,20 +59,32 @@ export default function TipModal({
 
       const amount = ethers.parseUnits(tipAmount || "0", decimals);
       if (amount <= 0) {
-        alert("Ingresa un monto válido.");
+        addToast({ message: "⚠️ Ingresa un monto válido.", type: "warning" });
         return;
       }
 
       setSending(true);
+      addToast({
+        message: `⏳ Enviando ${tipAmount} ${currency}...`,
+        type: "info",
+      });
+
       const tx = await contract.transfer(model.wallet, amount);
       await tx.wait();
 
-      alert(`✅ Tip enviado con éxito (${tipAmount} ${currency}) a ${model.name}!`);
+      addToast({
+        message: `✅ Tip enviado con éxito (${tipAmount} ${currency}) a ${model.name}!`,
+        type: "success",
+      });
+
       setTipAmount("");
       onClose();
     } catch (err) {
       console.error("❌ Error al enviar tip:", err);
-      alert("Error al enviar el tip. Verifica tu conexión o red BSC.");
+      addToast({
+        message: "❌ Error al enviar el tip. Verifica tu conexión o red BSC.",
+        type: "error",
+      });
     } finally {
       setSending(false);
     }
@@ -75,11 +92,14 @@ export default function TipModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
     >
-      <div className="bg-white dark:bg-neutral-900 p-6 rounded-2xl w-full max-w-sm text-center shadow-xl animate-fadeIn">
+      <div
+        className="bg-white dark:bg-neutral-900 p-6 rounded-2xl w-full max-w-sm text-center shadow-2xl transform transition-all
+                   border border-neutral-200 dark:border-neutral-700"
+      >
         <h3 className="text-2xl font-semibold mb-4 text-neutral-900 dark:text-white">
           💎 Enviar tip a {model.name || "la modelo"}
         </h3>
@@ -87,11 +107,12 @@ export default function TipModal({
         <input
           type="number"
           min="0"
+          step="0.01"
           value={tipAmount}
           onChange={(e) => setTipAmount(e.target.value)}
           placeholder="Monto"
           className="w-full p-3 border rounded-lg mb-4 text-center 
-                     dark:bg-neutral-800 dark:text-white border-neutral-300 dark:border-neutral-700"
+                     dark:bg-neutral-800 dark:text-white border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-red-500 outline-none transition"
         />
 
         <div className="flex gap-3 justify-center mb-4">
@@ -114,7 +135,7 @@ export default function TipModal({
         <button
           onClick={onClose}
           disabled={sending}
-          className="text-neutral-500 hover:underline text-sm"
+          className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 text-sm mt-2"
         >
           Cancelar
         </button>
@@ -122,3 +143,4 @@ export default function TipModal({
     </div>
   );
 }
+
