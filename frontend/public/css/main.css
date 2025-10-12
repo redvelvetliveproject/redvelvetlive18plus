@@ -17,31 +17,21 @@ a { color: inherit; text-decoration: none; }
 /* === Tokens de diseño === */
 :root {
   --font-sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial;
-
-  /* Colores base (modo claro) */
   --bg: #ffffff;
   --bg-soft: #f6f7f8;
   --panel: #ffffff;
   --border: #e9eaec;
   --text: #16181d;
   --muted: #61646b;
-
-  /* Marca */
   --brand: #e31221;
   --brand-600: #c80f1d;
   --brand-700: #a80d18;
-
-  /* Estados */
   --ok: #16a34a;
   --warn: #f59e0b;
   --err: #ef4444;
-
-  /* Radios y sombras */
   --radius: 14px;
   --shadow-1: 0 1px 2px rgba(0,0,0,.05);
   --shadow-2: 0 8px 24px rgba(0,0,0,.08);
-
-  /* Tipografías */
   --size-xs: .78rem;
   --size-sm: .9rem;
   --size-md: 1rem;
@@ -49,8 +39,6 @@ a { color: inherit; text-decoration: none; }
   --size-xl: 1.375rem;
   --size-2xl: clamp(1.625rem, 1.2rem + 1.6vw, 2.25rem);
   --size-3xl: clamp(2.2rem, 1.4rem + 3vw, 3.2rem);
-
-  /* Contenedor y gaps */
   --container: min(1140px, 92vw);
   --gap: 16px;
   --header-height: 64px;
@@ -70,7 +58,7 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
-/* Tema manual: data-theme="light" o "dark" */
+/* === Tema manual === */
 html[data-theme="light"] {
   --bg: #ffffff; --bg-soft: #f6f7f8; --panel: #ffffff; --border: #e9eaec;
   --text: #16181d; --muted: #61646b;
@@ -80,22 +68,18 @@ html[data-theme="dark"] {
   --text: #f4f5f7; --muted: #a2a6ae;
 }
 
-/* Scrollbar personalizado */
+/* Scrollbar */
 body::-webkit-scrollbar { width: 10px; }
 body::-webkit-scrollbar-track { background: var(--bg-soft); }
-body::-webkit-scrollbar-thumb { background-color: var(--brand); border-radius: 10px; border: 2px solid var(--bg-soft); }
-
-/* Modo alto contraste */
-html.contrast-mode {
-  --bg: #000;
-  --text: #fff;
-  --muted: #ccc;
-  --border: #fff3;
-  --brand: #ffcc00;
+body::-webkit-scrollbar-thumb {
+  background-color: var(--brand);
+  border-radius: 10px;
+  border: 2px solid var(--bg-soft);
 }
 
-/* Modo disléxico */
-html.dyslexia-mode { font-family: 'OpenDyslexic', var(--font-sans); }
+/* Modos accesibilidad */
+html.contrast-mode { --bg:#000;--text:#fff;--muted:#ccc;--border:#fff3;--brand:#ffcc00; }
+html.dyslexia-mode { font-family:'OpenDyslexic',var(--font-sans); }
 
 /* Animaciones utilitarias */
 .slide-in-left { animation: slideLeft .6s ease forwards; }
@@ -162,20 +146,11 @@ body {
 
 /* === Toast global === */
 .toast {
-  position: fixed;
-  bottom: 20px;
-  right: -320px;
-  min-width: 220px;
-  max-width: 320px;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-weight: 600;
-  color: #fff;
-  font-size: 0.9rem;
+  position: fixed; bottom: 20px; right: -320px; min-width: 220px;
+  max-width: 320px; padding: 12px 18px; border-radius: 8px;
+  font-weight: 600; color: #fff; font-size: 0.9rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  opacity: 0;
-  transition: all .4s ease;
-  z-index: 9999;
+  opacity: 0; transition: all .4s ease; z-index: 9999;
 }
 .toast.show { right: 20px; opacity: 1; }
 .toast-success { background: #16a34a; }
@@ -183,142 +158,50 @@ body {
 .toast-info    { background: #2563eb; }
 .toast-warn    { background: #f59e0b; color:#111; }
 
-/* === Botón accesibilidad === */
+/* === Accesibilidad === */
 .btn-accessibility {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
+  position: fixed; bottom: 20px; left: 20px;
+  background: var(--brand); color: #fff; border-radius: 50%;
+  padding: 12px; cursor: pointer; z-index: 10000;
+}
+
+/* === Animaciones TipInline (Live) === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes progressFill { from { width: 0; } to { width: 100%; } }
+@keyframes glowSuccess {
+  0% { box-shadow: 0 0 0px rgba(0,255,100,0); }
+  50% { box-shadow: 0 0 12px rgba(0,255,100,0.7); }
+  100% { box-shadow: 0 0 0px rgba(0,255,100,0); }
+}
+.animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
+.glow-success { animation: glowSuccess 1.2s ease-in-out infinite; }
+
+/* TipInline Container */
+.tip-inline-container {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: fadeIn .4s ease-out;
+}
+.tip-inline-container button {
   background: var(--brand);
   color: #fff;
-  border-radius: 50%;
-  padding: 12px;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-  z-index: 10000;
+  transition: background .3s ease;
 }
+.tip-inline-container button:hover { background: var(--brand-600); }
 
-/* === Sección Batallas === */
-.battle-card {
-  border: 2px dashed var(--brand);
-  padding: 16px;
-  border-radius: var(--radius);
-  text-align: center;
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(227,18,33,.6); }
-  50% { box-shadow: 0 0 12px 8px rgba(227,18,33,.2); }
-}
-
-/* === Modo Principiante Tímido === */
-.shy-mode {
-  background: #111;
-  color: #aaa;
-  border: 1px solid #333;
-  padding: 16px;
-  border-radius: var(--radius);
-  text-align: center;
-}
-
-/* === Estilos específicos: Wallet === */
-.wallet-container {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  max-width: 500px;
-  margin: 2rem auto;
-  box-shadow: var(--shadow-2);
-}
-.wallet-container h2 { margin-bottom: 16px; font-size: var(--size-xl); }
-.balance-card {
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-1);
-}
-.balance-card h3 { margin: 0; font-size: var(--size-lg); }
-.balance-card p { margin-top: .5rem; font-size: var(--size-xl); font-weight: bold; color: var(--brand); }
-.wallet-actions { display:flex; gap:12px; margin-bottom:16px; }
-.wallet-actions button {
-  flex:1; display:flex; align-items:center; justify-content:center;
-  gap:8px; padding:12px; border:none; border-radius:var(--radius);
-  cursor:pointer; background:var(--brand); color:#fff; font-weight:600;
-  transition:background .2s;
-}
-.wallet-actions button:hover { background: var(--brand-600); }
-.info { font-size: var(--size-sm); color: var(--muted); }
-.info code {
-  font-family: ui-monospace, monospace;
-  background: var(--bg-soft);
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-
-/* === Estilos específicos: Withdraw === */
-.withdraw-container {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  max-width: 480px;
-  margin: 2rem auto;
-  box-shadow: var(--shadow-2);
-}
-.withdraw-container h2 { margin-bottom:16px; font-size:var(--size-xl); }
-.withdraw-container .balance {
-  background: var(--bg-soft);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-1);
-}
-.withdraw-container form label { margin-top: 12px; font-weight: 600; }
-.withdraw-container input[type="text"],
-.withdraw-container input[type="number"] {
-  width: 100%; margin-top:4px; padding:10px 12px;
-  border:1px solid var(--border); border-radius: var(--radius);
-  background: var(--panel); color: var(--text);
-}
-.withdraw-container button {
-  margin-top:16px; padding:12px; width:100%;
-  border:none; border-radius: var(--radius);
-  background: var(--brand); color:#fff; font-weight:600; cursor:pointer;
-  transition: background .2s ease;
-}
-.withdraw-container button:hover { background: var(--brand-600); }
-.nota { margin-top:12px; font-size: var(--size-sm); color: var(--muted); }
-
-/* === Estilos específicos: Tips History === */
-.tips-history-container {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  max-width: 700px;
-  margin: 2rem auto;
-  box-shadow: var(--shadow-2);
-}
-.tips-history-container h2 { margin-bottom:16px; font-size: var(--size-xl); }
-.tips-table {
-  width: 100%; border-collapse: collapse;
-  margin-bottom: 16px; font-size: var(--size-sm);
-}
-.tips-table thead th {
-  text-align: left; padding: 8px;
-  background: var(--bg-soft);
-  border-bottom: 1px solid var(--border);
-}
-.tips-table tbody td {
-  padding: 8px; border-bottom: 1px solid var(--border);
-}
-.tips-table tbody tr:nth-child(even) { background: var(--bg-soft); }
-#exportarTipsPDF {
-  display:inline-block; padding:10px 16px;
-  border:none; border-radius: var(--radius);
-  background: var(--brand); color:#fff; cursor:pointer; font-weight:600;
-  transition: background .2s;
-}
-#exportarTipsPDF:hover { background: var(--brand-600); }
