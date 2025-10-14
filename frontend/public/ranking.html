@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>🌹 RedVelvetLive · Ranking de Modelos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Top Modelos, Destacadas, Embajadoras y En Vivo en RedVelvetLive" />
+  <style>
+    :root{
+      --bg:#0f1115;--panel:#151822;--soft:#191c27;--text:#e9ecf1;
+      --muted:#9aa3b2;--brand:#e31221;--ok:#16a34a;--warn:#f59e0b;--err:#ef4444;--br:14px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font:14px/1.55 system-ui,Segoe UI,Roboto,Inter,Arial;color:var(--text);
+      background:linear-gradient(180deg,#0b0c10,#10131a);min-height:100vh}
+    .wrap{max-width:1200px;margin:0 auto;padding:24px}
+    .card{background:var(--panel);border:1px solid #232633;border-radius:var(--br);
+      box-shadow:0 10px 24px rgba(0,0,0,.25);padding:18px}
+    h1{font-size:24px;margin:0 0 8px}
+    p.muted{color:var(--muted);margin:4px 0 0}
+    /* tabs */
+    .tabs{display:flex;gap:8px;margin:14px 0}
+    .tab{flex:1;text-align:center;padding:10px 12px;border-radius:10px;cursor:pointer;
+      background:#0f121a;border:1px solid #2a2e3b;font-weight:700;color:#e9ecf1}
+    .tab.active{background:var(--brand);border-color:var(--brand)}
+    /* toolbar */
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:8px 0 12px}
+    .search{display:flex;gap:8px;flex:1}
+    input,select,button{border-radius:10px;border:1px solid #2a2e3b;background:#0e1118;
+      color:var(--text);padding:10px 12px;font-size:14px}
+    button{background:var(--brand);border-color:var(--brand);font-weight:800;cursor:pointer;transition:.2s}
+    button:hover{opacity:.9}
+    button.secondary{background:#1f2431;border-color:#2a2e3b}
+    /* grid cards */
+    .grid{display:grid;gap:14px}
+    @media (min-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (min-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+    @media (min-width:1200px){.grid{grid-template-columns:repeat(4,1fr)}}
+    .mcard{background:#0e1118;border:1px solid #23263a;border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+    .thumb{position:relative;aspect-ratio:16/10;background:#0b0e15}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .badges{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap}
+    .badge{font-size:12px;font-weight:800;padding:4px 8px;border-radius:999px;border:1px solid transparent}
+    .b-live{background:#300f11;color:#ff9aaa;border-color:#6a1a1a}
+    .b-voice{background:#2b230f;color:#ffd27a;border-color:#6a531a}
+    .b-amb{background:#0f2b18;color:#6df0a7;border-color:#1a6a43}
+    .b-feat{background:#1a2030;color:#9ab8ff;border-color:#334a85}
+    .body{padding:12px}
+    .name{font-weight:900;font-size:16px;margin:0 0 4px}
+    .meta{color:#9aa3b2;font-size:13px;margin:0}
+    .actions{display:flex;gap:8px;padding:12px;border-top:1px solid #1f2431;margin-top:auto}
+    .actions a{flex:1;text-align:center;text-decoration:none;color:#fff;padding:10px;border-radius:8px;background:#1f2431;border:1px solid #2a2e3b;font-weight:800}
+    .actions a.primary{background:var(--brand);border-color:var(--brand)}
+    /* states */
+    .center{display:flex;align-items:center;justify-content:center;padding:28px}
+    .muted.center{opacity:.85}
+    /* pager */
+    .pager{display:flex;gap:10px;align-items:center;justify-content:center;margin:14px 0 2px}
+    .pill{display:inline-flex;align-items:center;gap:6px;background:#0e1118;border:1px solid #2a2e3b;border-radius:999px;padding:6px 10px}
+    /* toast */
+    #toast{position:fixed;bottom:-100px;right:20px;transition:.4s;opacity:0;background:#2563eb;
+      color:#fff;font-weight:800;padding:10px 14px;border-radius:10px;box-shadow:0 10px 20px rgba(0,0,0,.4);z-index:9999}
+    #toast.show{bottom:20px;opacity:1}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>🌹 Ranking de Modelos</h1>
+      <p class="muted">Explora Top Modelos, Destacadas, Embajadoras y En Vivo</p>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active" data-cat="top">🏆 Top</div>
+        <div class="tab" data-cat="featured">🌟 Destacadas</div>
+        <div class="tab" data-cat="ambassadors">💎 Embajadoras</div>
+        <div class="tab" data-cat="live">🔴 En vivo</div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search">
+          <input id="q" type="text" placeholder="Buscar por nombre o país…" />
+          <select id="limit">
+            <option>12</option><option selected>24</option><option>48</option>
+          </select>
+          <button id="btnSearch" class="secondary">Buscar</button>
+        </div>
+        <div class="pager">
+          <button id="btnPrev" class="secondary">Anterior</button>
+          <div class="pill"><span id="pageInfo">0–0</span></div>
+          <button id="btnNext" class="secondary">Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      <div id="grid" class="grid">
+        <!-- Cards renderizadas por JS -->
+      </div>
+
+      <!-- Estados -->
+      <div id="stateEmpty" class="muted center" style="display:none">Sin resultados…</div>
+      <div id="stateLoading" class="muted center" style="display:none">Cargando…</div>
+      <div id="stateError" class="muted center" style="display:none">Ocurrió un error al cargar.</div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- JS externo -->
+  <script src="/admin/js/ranking.js"></script>
+</body>
+</html>
