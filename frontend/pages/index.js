@@ -10,7 +10,7 @@ export default function Home() {
         <title>RedVelvetLive 🚀 | Plataforma Web3 de Contenido</title>
         <meta
           name="description"
-          content="RedVelvetLive es la plataforma Web3 que revoluciona la industria del contenido para adultos. Pagos instantáneos, sin censura y sin bloqueos injustos."
+          content="RedVelvetLive es la plataforma Web3 que revoluciona la industria del contenido para adultos. Pagos instantáneos, sin bloqueos injustos y sin intermediarios abusivos."
         />
         <meta
           name="keywords"
@@ -19,7 +19,7 @@ export default function Home() {
         <meta property="og:title" content="RedVelvetLive 🚀 | Web3 para modelos" />
         <meta
           property="og:description"
-          content="Pagos al instante, sin intermediarios, sin bloqueos injustos. RedVelvetLive: la revolución del contenido Web3."
+          content="Pagos al instante, sin intermediarios y sin bloqueos injustos. RedVelvetLive: la revolución del contenido Web3."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.redvelvetlive.com" />
@@ -44,6 +44,7 @@ export default function Home() {
         >
           Bienvenido a RedVelvetLive 🚀
         </h1>
+
         <p
           style={{
             fontSize: "1.4rem",
@@ -52,8 +53,8 @@ export default function Home() {
             lineHeight: "1.6",
           }}
         >
-          La revolución digital de los creadores de contenido para adultos.  
-          Pagos al instante, sin intermediarios ni censura injusta.
+          La revolución digital de los creadores de contenido para adultos.{" "}
+          Pagos al instante, sin intermediarios y sin bloqueos injustos.
         </p>
 
         <div style={{ marginTop: "2rem" }}>
@@ -74,6 +75,7 @@ export default function Home() {
           >
             Iniciar Sesión
           </a>
+
           <a
             href="/register.html"
             style={{
@@ -109,4 +111,3 @@ export default function Home() {
     </Layout>
   );
 }
-
